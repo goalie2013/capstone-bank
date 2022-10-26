@@ -7,7 +7,6 @@ const colors = require("colors");
 const bcrypt = require("bcrypt");
 const saltRounds = 10;
 
-const url = process.env.MONGO_URI;
 const User = models.User;
 
 // let db = null;
@@ -24,7 +23,7 @@ const connectDB = async () => {
   console.log(process.env.MONGO_URI);
   try {
     console.log("connectDB()");
-    const conn = await mongoose.connect(process.env.MONGO_URI, {
+    const conn = await mongoose.connect(process.env.MONGO_ATLAS, {
       useUnifiedTopology: true,
     });
 

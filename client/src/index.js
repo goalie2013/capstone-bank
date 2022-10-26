@@ -10,6 +10,7 @@ import {
   from,
 } from "@apollo/client";
 import { onError } from "@apollo/client/link/error";
+import DatabaseDown from "./components/DatabaseDown";
 
 export const UserContext = React.createContext(null);
 
@@ -42,7 +43,10 @@ const errorLink = onError(({ graphQLErrors, networkError }) => {
       )
     );
 
-  if (networkError) console.log(`[Network error]: ${networkError}`);
+  if (networkError) {
+    console.log(`[Network ERROR]: ${networkError}`);
+    return <DatabaseDown />;
+  }
 });
 
 const client = new ApolloClient({

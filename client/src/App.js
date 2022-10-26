@@ -1,15 +1,9 @@
 import "./App.css";
 import "bootstrap/dist/css/bootstrap.min.css";
-import NavBar from "./components/NavBar";
 import Footer from "./components/Footer";
 import Home from "./pages/Home";
 import CreateAccount from "./pages/CreateAccount";
-import PageWrapper from "./pages/PageWrapper";
-import Deposit from "./pages/Deposit";
-import Withdraw from "./pages/Withdraw";
-import UserData from "./pages/UserData";
 import { Route, BrowserRouter, Routes, Link } from "react-router-dom";
-import AllData from "./pages/AllData";
 import NotAuthorized from "./components/NotAuthorized";
 import AuthWrapper from "./pages/AuthWrapper";
 import PageNotFound from "./components/PageNotFound";
