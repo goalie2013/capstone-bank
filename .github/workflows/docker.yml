@@ -41,7 +41,7 @@ jobs:
           tags: ${{ secrets.DOCKER_HUB_USERNAME }}/capstone-bank/server:latest
       - name: Build and push client
         id: docker_build_client
-        uses: docker/build-push-action@v3=2
+        uses: docker/build-push-action@v2
         with:
           context: ./
           file: ./client/Dockerfile
