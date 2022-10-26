@@ -8,7 +8,7 @@ COPY package.json /server/package.json
 # Install dependencies
 RUN npm install
 # Copy app source code
-COPY ./server /server
+COPY . /server
 
 #Expose port and start the application
 # CMD is Entry Point of application
@@ -24,7 +24,7 @@ COPY package.json /client/package.json
 # Install dependencies
 RUN npm install
 # Copy app source code
-COPY ./client /client
+COPY . /client
 
 #Expose port and start the application
 # CMD is Entry Point of application
