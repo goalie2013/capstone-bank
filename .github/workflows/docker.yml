@@ -12,8 +12,6 @@ jobs:
       - uses: actions/checkout@v2
       - name: Use Node.js ${{ matrix.node-version }}
         uses: actions/setup-node@v1
-      - name: Workflow Dispatch
-        uses: benc-uk/workflow-dispatch@v1.1
         with:
           node-version: ${{ matrix.node-version }}
       - run: npm install
@@ -35,19 +33,7 @@ jobs:
         run: docker build -t capstone-bank/server ./server
       - name: Build the tagged Docker image client
         run: docker build -t capstone-bank/client ./client
-      - name: Build and push server
-        id: docker_build_server
-        uses: docker/build-push-action@v3
-        with:
-          context: .
-          file: ./server/Dockerfile
-          push: true
-          tags: ${{ secrets.DOCKER_HUB_USERNAME }}/capstone-bank/server:latest
-      - name: Build and push server
-        id: docker_build_client
-        uses: docker/build-push-action@v3
-        with:
-          context: .
-          file: ./client/Dockerfile
-          push: true
-          tags: ${{ secrets.DOCKER_HUB_USERNAME }}/capstone-bank/client:latest
+      - name: Push the tagged Docker image server
+        run: docker push ./server
+      - name: Push the tagged Docker image client
+        run: docker push ./client
