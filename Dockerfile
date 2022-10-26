@@ -1,4 +1,4 @@
-FROM node:16-alpine
+FROM node:12
 
 ENV PORT 3000
 
@@ -15,7 +15,7 @@ RUN npm install
 # Copy local files to app folder
 COPY . /usr/src/app
 
-run npm run build
+RUN npm run build
 # Expose port
 EXPOSE 3000
 
