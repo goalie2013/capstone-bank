@@ -1,4 +1,4 @@
-FROM node:19-alpine
+FROM node:16-alpine
 
 # Add working directory
 WORKDIR /usr/src/app
@@ -15,7 +15,7 @@ COPY . .
 # Expose port
 EXPOSE 3000
 
-FROM node:19-alpine
+FROM node:16-alpine
 
 # Add working directory
 WORKDIR /usr/src/app
