@@ -30,21 +30,12 @@ jobs:
         id: vars
         run: echo ::set-output name=tag::$(echo ${GITHUB_REF:10})
 
-      - name: Build and push server
-        id: docker_build_server
+      - name: Build and push
+        id: docker_build
         uses: docker/build-push-action@v2
         with:
           context: ./
-          file: ./server/Dockerfile
-          builder: ${{ steps.buildx.outputs.name }}
-          push: true
-          tags: ${{ secrets.DOCKER_HUB_USERNAME }}/capstone-bank:capstone-bank
-      - name: Build and push client
-        id: docker_build_client
-        uses: docker/build-push-action@v2
-        with:
-          context: ./
-          file: ./client/Dockerfile
+          file: ./Dockerfile
           builder: ${{ steps.buildx.outputs.name }}
           push: true
           tags: ${{ secrets.DOCKER_HUB_USERNAME }}/capstone-bank:capstone-bank
