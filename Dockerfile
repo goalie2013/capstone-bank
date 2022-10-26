@@ -1,35 +1,22 @@
 FROM node:16-alpine
 
+ENV PORT 3000
+
 # Add working directory
+RUN mkdir -p /usr/src/app
 WORKDIR /usr/src/app
 
 # Copy npm dependencies (Host -> Docker)
-COPY package*.json ./
+COPY package*.json /usr/src/app
 
 # Install dependencies
 RUN npm install
 
 # Copy local files to app folder
-COPY . .
+COPY . /usr/src/app
 
+run npm run build
 # Expose port
 EXPOSE 3000
 
-FROM node:16-alpine
-
-# Add working directory
-WORKDIR /usr/src/app
-# Copy npm dependencies (Host -> Docker)
-COPY package*.json ./
-
-# Install dependencies
-RUN npm install
-
-# Copy local files to app source code
-COPY . .
-
-#Expose port and start the application
-EXPOSE 5050
-
-# CMD is Entry Point of application
-CMD ["npm", "start"]
+CMD ["npm", "run", "dev"]
