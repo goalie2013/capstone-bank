@@ -36,7 +36,7 @@ jobs:
       - name: Build the tagged Docker image client
         run: docker build -t capstone-bank/client ./client
       - name: Build and push server
-        id: docker_build
+        id: docker_build_server
         uses: docker/build-push-action@v3
         with:
           context: .
@@ -44,7 +44,7 @@ jobs:
           push: true
           tags: ${{ secrets.DOCKER_HUB_USERNAME }}/capstone-bank/server:latest
       - name: Build and push server
-        id: docker_build
+        id: docker_build_client
         uses: docker/build-push-action@v3
         with:
           context: .
