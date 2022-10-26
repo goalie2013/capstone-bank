@@ -40,7 +40,7 @@ jobs:
         uses: docker/build-push-action@v3
         with:
           context: .
-          file: capstone-bank/server/Dockerfile
+          file: capstone/server/Dockerfile
           push: true
           tags: ${{ secrets.DOCKER_HUB_USERNAME }}/capstone-bank/server:latest
       - name: Build and push server
@@ -48,6 +48,6 @@ jobs:
         uses: docker/build-push-action@v3
         with:
           context: .
-          file: capstone-bank/client/Dockerfile
+          file: capstone/client/Dockerfile
           push: true
           tags: ${{ secrets.DOCKER_HUB_USERNAME }}/capstone-bank/client:latest
