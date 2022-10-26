@@ -38,7 +38,7 @@ jobs:
           file: ./server/Dockerfile
           builder: ${{ steps.buildx.outputs.name }}
           push: true
-          tags: ${{ secrets.DOCKER_HUB_USERNAME }}/capstone-bank/server:latest
+          tags: ${{ secrets.DOCKER_HUB_USERNAME }}/capstone-bank/server:capstone-bank
       - name: Build and push client
         id: docker_build_client
         uses: docker/build-push-action@v2
