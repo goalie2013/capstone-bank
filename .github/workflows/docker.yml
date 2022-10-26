@@ -29,11 +29,22 @@ jobs:
       - name: Get the version
         id: vars
         run: echo ::set-output name=tag::$(echo ${GITHUB_REF:10})
-      - name: Build the tagged Docker image server
-        run: docker build -t capstone-bank/server ./server
-      - name: Build the tagged Docker image client
-        run: docker build -t capstone-bank/client ./client
-      - name: Push the tagged Docker image server
-        run: docker push ./server
-      - name: Push the tagged Docker image client
-        run: docker push ./client
+
+      - name: Build and push server
+        id: docker_build_server
+        uses: docker/build-push-action@v3
+        with:
+          context: ./
+          file: ./server/Dockerfile
+          builder: ${{ steps.buildx.outputs.name }}
+          push: true
+          tags: ${{ secrets.DOCKER_HUB_USERNAME }}/capstone-bank/server:latest
+      - name: Build and push server
+        id: docker_build_client
+        uses: docker/build-push-action@v3
+        with:
+          context: ./
+          file: ./client/Dockerfile
+          builder: ${{ steps.buildx.outputs.name }}
+          push: true
+          tags: ${{ secrets.DOCKER_HUB_USERNAME }}/capstone-bank/client:latest
