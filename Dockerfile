@@ -23,7 +23,7 @@ WORKDIR /usr/src/app
 COPY package*.json ./
 
 # Install dependencies
-RUN npm install -production --silent && mv node_modules ../
+RUN npm install
 
 # Copy local files to app source code
 COPY . .
