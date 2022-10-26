@@ -21,6 +21,8 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
+      - name: Login to DockerHub Registry
+        run: echo ${{ secrets.DOCKERHUB_USERNAME }} | docker login -u ${{ secrets.DOCKERHUB_USERNAME }} --password-stdin ${{secrets.DOCKERHUB_TOKEN}}
       - name: Get the version
         id: vars
         run: echo ::set-output name=tag::$(echo ${GITHUB_REF:10})
@@ -28,8 +30,6 @@ jobs:
         run: docker build -t capstone-bank/server ./server
       - name: Build the tagged Docker image client
         run: docker build -t capstone-bank/client ./client
-      - name: Login to DockerHub Registry
-        run: docker login -u ${{ env.DOCKERHUB_USERNAME }} --password-stdin ${{env.DOCKERHUB_TOKEN}}
       - name: Push the tagged Docker image server
         run: docker push capstone-bank/server
       - name: Push the tagged Docker image client
