@@ -4,6 +4,8 @@
 const mongoose = require("mongoose");
 const models = require("./schema/userSchema");
 const colors = require("colors");
+const bcrypt = require("bcrypt");
+const saltRounds = 10;
 
 const url = process.env.MONGO_URI;
 const User = models.User;
@@ -32,6 +34,7 @@ const connectDB = async () => {
   } catch (err) {
     console.error("connectDB Error", colors.red(err.message));
     //TODO:Throw Error
+    throw new Error("Error connecting to Database");
   }
 
   mongoose.connection.on("error", (err) => {
@@ -47,10 +50,15 @@ const connectDB = async () => {
 /////////////////////////////////////////////////
 function createUser({ name, email, password }) {
   console.log("createUser()");
+  // Generate Salt
+  const salt = bcrypt.genSaltSync(saltRounds);
+  // Hash Password
+  const hash = bcrypt.hashSync(password, salt);
+
   const newUser = new User({
     name,
     email,
-    password,
+    password: hash,
     balance: 0,
     transactions: [],
   });
@@ -98,10 +106,27 @@ function getAllUsers() {
 }
 
 /////////////////////////////////////////////////
+// Login User
+/////////////////////////////////////////////////
+//TODO:
+async function loginUser(email, password = "") {
+  console.log("loginUser FUNCTION");
+  const user = await getUserByEmail(email);
+  const hash = user.password;
+  const originalUser = { ...user, password };
+
+  return new Promise((resolve, reject) => {
+    if (password && hash && bcrypt.compareSync(password, hash))
+      resolve(originalUser);
+    reject("User Not Found");
+  });
+}
+
+/////////////////////////////////////////////////
 // Update User
 /////////////////////////////////////////////////
 function updateUser(id, balance, transactions) {
-  //TODO: Generate ID for New Transaction
+  //TODO: Generate ID for each new Transaction
   return new Promise((resolve, reject) => {
     User.findByIdAndUpdate(id, { balance, transactions }, (err, result) => {
       console.log("updateUser result:", result);
@@ -139,6 +164,7 @@ module.exports = {
   getUser,
   getUserByEmail,
   getAllUsers,
+  loginUser,
   updateUser,
   deleteUser,
 };

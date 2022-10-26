@@ -4,28 +4,10 @@ const cors = require("cors");
 const { graphqlHTTP } = require("express-graphql");
 const dal = require("./dalNew");
 const bodyParser = require("body-parser");
+const middleware = require("./middleware/auth");
 const { schema, root } = require("./schema/graphqlSchema");
-const { initializeApp } = require("firebase-admin/app");
-initializeApp({
-  // credential: applicationDefault(),
-  // databaseURL: process.env.MONGO_URI,
-});
-// idToken comes from the client app
-// getAuth()
-//   .verifyIdToken(idToken)
-//   .then((decodedToken) => {
-//     const uid = decodedToken.uid;
-//     console.log("uid", uid);
-//   })
-//   .catch((error) => {
-//     // Handle error
-//   });
-
-// var admin = require("firebase-admin");
-// var serviceAccount = require("path/to/serviceAccountKey.json");
-// admin.initializeApp({
-//   credential: admin.credential.cert(serviceAccount)
-// });
+const port = process.env.PORT;
+console.log("port", port);
 
 const app = express();
 // CORS FOR DEVELOPMENT ONLY
@@ -35,11 +17,16 @@ app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 app.use(express.static("public"));
 
-const port = process.env.PORT;
-console.log("port", port);
+// app.use(middleware.decodeToken);
 
 // Connect to Database
-dal.connectDB();
+try {
+  dal.connectDB();
+} catch (err) {
+  if (err.message === "Error connecting to Database") {
+    res.status(500).send("500 Internal Server Error");
+  }
+}
 
 app.use(
   "/graphql",
@@ -49,5 +36,25 @@ app.use(
     rootValue: root,
   })
 );
+
+app.get("/h", (req, res) => {
+  res.send("Hello World!");
+});
+app.get("api/todos", (req, res) => {
+  console.log("hey");
+  return res.json({
+    todos: [
+      {
+        title: "Task1",
+      },
+      {
+        title: "Task2",
+      },
+      {
+        title: "Task3",
+      },
+    ],
+  });
+});
 
 app.listen(port, () => console.log(`Server running on port ${port}`));

@@ -1,6 +1,8 @@
 const { buildSchema } = require("graphql");
 const dal = require("../dalNew");
 const colors = require("colors");
+const bcrypt = require("bcrypt");
+const saltRounds = 10;
 
 const schema = buildSchema(`
 
@@ -8,7 +10,6 @@ const schema = buildSchema(`
         getUser(id: ID!): User
         getUserByEmail(email: String!): User
         getAllUsers: [User]
-        getPostsFromAPI: [Post]
     }
 
     type Transaction {
@@ -24,13 +25,6 @@ const schema = buildSchema(`
         password: String
         balance: Int
         transactions: [Transaction]
-    }
-
-    type Post {
-        userId: Int
-        id: Int
-        title: String
-        body: String
     }
 
     input TransactionInput {
@@ -52,6 +46,7 @@ const schema = buildSchema(`
         createUser(user: UserInfo!): User
         updateUser(id: ID!, userData: UserData!): User
         deleteUser(id: ID!): String
+        loginUser(email: String!, password: String): User
     }
 `);
 // createUser(name: String, email: String): [User]
@@ -86,18 +81,20 @@ const root = {
       console.error("Error", err.message);
     }
   },
-  //   getPostsFromAPI: async () => {
-  //     const url = "https://jsonplaceholder.typicode.com/posts";
-  //     const result = axios.get(url);
-  //     return result.data;
-  //   },
   ////////////////////////////////////////////////////////////////////////
   // Mutations
   createUser: async (args) => {
     // console.log(args.user);
     // return user;
     try {
-      const user = await dal.createUser(args.user);
+      const hash = await new Promise((resolve, reject) => {
+        bcrypt.hash(args.user.password, saltRounds, (err, hash) => {
+          if (err) reject(err);
+          resolve(hash);
+        });
+      });
+      const user = await dal.createUser(args.user, hash);
+      console.log("returning user...", user);
       return user;
     } catch (err) {
       console.error("Error", colors.red(err.message));
@@ -121,6 +118,15 @@ const root = {
       return `Successfully Deleted Account of ${user.name}`;
     } catch (err) {
       console.error("Error", err.message);
+    }
+  },
+  loginUser: async ({ email, password }) => {
+    try {
+      const user = await dal.loginUser(email, password);
+      console.log("Logged In User", user);
+      return user;
+    } catch (err) {
+      console.error("Error logging in user", colors.red(err.message));
     }
   },
 };
