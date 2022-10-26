@@ -1,0 +1,36 @@
+name: Docker Image CI
+
+on: push
+#
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        node-version: [16.x]
+    steps:
+      - uses: actions/checkout@v2
+      - name: Use Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v1
+        with:
+          node-version: ${{ matrix.node-version }}
+      - run: npm install
+      - run: npm run build --if-present
+      - run: npm test
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Login to DockerHub Registry
+        run: docker login -u ${{ secrets.DOCKERHUB_USERNAME }} ${{secrets.DOCKERHUB_TOKEN}}
+      - name: Get the version
+        id: vars
+        run: echo ::set-output name=tag::$(echo ${GITHUB_REF:10})
+      - name: Build the tagged Docker image serverr
+        run: docker build -t capstone-bank/server ./server
+      - name: Build the tagged Docker image client
+        run: docker build -t capstone-bank/client ./client
+      - name: Push the tagged Docker image server
+        run: docker push capstone-bank/server
+      - name: Push the tagged Docker image client
+        run: docker push capstone-bank/client
