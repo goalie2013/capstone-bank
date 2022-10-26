@@ -39,4 +39,14 @@ const DELETE_USER = gql`
   }
 `;
 
-export { CREATE_USER, UPDATE_USER, DELETE_USER };
+const LOG_IN_USER = gql`
+  mutation loginUser($email: String!, $password: String) {
+    loginUser(email: $email, password: $password) {
+      id
+      name
+      email
+    }
+  }
+`;
+
+export { CREATE_USER, UPDATE_USER, DELETE_USER, LOG_IN_USER };

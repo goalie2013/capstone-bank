@@ -1,5 +1,6 @@
 import React from "react";
 import Card from "react-bootstrap/Card";
+import { COLORS } from "../themes";
 
 export default function CustomCard(props) {
   // Dynamic Styles
@@ -11,37 +12,82 @@ export default function CustomCard(props) {
         ? " text-" + props.txtHeaderColor
         : " text-black";
       console.log("bg", bg);
-      return "card mb-3 " + bg + txt;
+      return "card mb-3 " + "bg" + txt;
     } else {
       const bg = props.bgColor ? " bg-" + props.bgColor : " ";
       const txt = props.txtColor ? " text-" + props.txtColor : " text-black";
       // console.log("bg", bg);
-      return "card custom-card mb-3 " + bg + txt;
+      return "card custom-card mb-3 rounded " + bg + txt;
+    }
+  }
+
+  function classesAlert(str) {
+    if (str === COLORS.transactionComplete) {
+      return "alert alert-success";
+    } else {
+      return "alert alert-danger";
     }
   }
 
   return (
     <Card
-      className="{classes()} kk"
+      className="{classes()} kk imageborder"
       style={{
-        backgroundColor: props.bgColor,
+        // backgroundColor: props.bgColor,
+        background: "rgb(230,241,255,1)",
         width: "25rem",
         marginTop: "2.5rem",
         boxShadow: "0 3rem 5rem rgba(0, 0, 0, 0.2)",
+        borderRadius: "20px",
       }}
     >
-      <Card.Header
-        className={classes("header")}
-        style={{ backgroundColor: props.bgHeaderColor }}
+      {/* <Card.Header
+        // className={classes("header")}
+        className="card-header"
+        style={{
+          backgroundColor: props.bgHeaderColor,
+        }}
+      > */}
+      <div
+        style={{
+          textAlign: "center",
+          color: COLORS.lighterTheme,
+          background: COLORS.darkerTheme,
+          borderTopLeftRadius: "20px",
+          borderTopRightRadius: "20px",
+          fontSize: "1.75rem",
+          padding: "1rem",
+          overflowWrap: "break-word",
+        }}
       >
         {props.header}
-      </Card.Header>
+      </div>
+      {/* </Card.Header> */}
       <Card.Body>
-        {props.title && <h5 className="card-title">{props.title}</h5>}
-        {props.text && <p className="card-text">{props.text}</p>}
+        {props.title && (
+          <h5 style={{ fontWeight: "800" }} className="card-title">
+            {props.title}
+          </h5>
+        )}
+        {props.text && (
+          <p className="card-text" style={{ fontWeight: "700" }}>
+            {props.text}
+          </p>
+        )}
         {props.body}
         {props.statusText && (
-          <div id={props.statusColor}>{props.statusText}</div>
+          <div
+            class={classesAlert(props.statusColor)}
+            role="alert"
+            style={{
+              color: props.statusColor,
+              marginTop: "0.5rem",
+              textAlign: "center",
+              boxShadow: "0 0.25rem 1rem rgba(0, 0, 0, 0.3)",
+            }}
+          >
+            {props.statusText}
+          </div>
         )}
       </Card.Body>
     </Card>

@@ -18,11 +18,8 @@ body {
 .app-wrapper {
   display: grid;
   grid-template-rows: auto 1fr auto;
-}
-
-.navbar {
-  min-height: 9vh;
-  background-color: #e5eaf5;
+  background: #fcf6f5ff;
+  color: #89abe3ff;
 }
 
 .link:hover {
@@ -34,15 +31,23 @@ body {
     /* width: 100%; */
     display: flex;
     flex-direction: column;
-    /* place-items: center; */
     padding: 2rem;
-    /* margin-bottom: 2rem; */
-    /* margin-top: -0.5rem; */
+
     min-height: 101vh;
-    justify-content: center;
+    margin-top: 5rem;
+    justify-content: flex-start;
     align-items: center;
     z-index: 2;
-    background-color: #f0f0f0;
+  }
+
+  .loginOutBtn {
+    background: #fcf6f5ff;
+    color: #89abe3ff;
+    font-weight: 800;
+    box-shadow: "0 0.2rem 0.75rem rgba(0, 0, 0, 0.3)";
+    margin-top: 1rem;
+    margin-left: 0rem !important;
+    width: 25%;
   }
 }
 
@@ -55,10 +60,17 @@ body {
     /* margin-bottom: 2rem; */
     /* height: 100%; */
     min-height: 101vh;
+    margin-top: 5rem;
     justify-content: flex-start;
     align-items: center;
     z-index: 2;
-    background-color: #f0f0f0;
+  }
+  .loginOutBtn {
+    background: #fcf6f5ff;
+    color: #89abe3ff;
+    font-weight: 800;
+    box-shadow: "0 0.2rem 0.75rem rgba(0, 0, 0, 0.3)";
+    margin-left: "1rem";
   }
 }
 
@@ -87,6 +99,7 @@ body {
   flex-grow: 1;
   border-bottom: 1px solid black;
   padding: 2rem;
+  font-family: monospace;
 }
 
 .modal {
@@ -174,10 +187,6 @@ body {
   z-index: 4;
 }
 
-.reda {
-  color: "red";
-}
-
 .green {
   color: "green";
 }
@@ -187,11 +196,11 @@ body {
   display: flex;
   flex-direction: column;
   align-items: center;
-  background-color: #e5eaf5;
-  color: white;
+  background-color: #89abe3ff;
   /* min-height: 8vh; */
   padding: 0.1rem;
-  position: fixed;
+  padding-bottom: 0.25rem;
+  position: relative;
   bottom: 0;
   left: 0;
   right: 0;

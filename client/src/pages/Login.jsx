@@ -4,36 +4,38 @@ import SubmitBtn from "../components/SubmitBtn";
 import Card from "react-bootstrap/Card";
 import Form from "react-bootstrap/Form";
 import CustomCard from "../components/Card";
-// import { UserContext } from "..";
-import validator from "validator";
+import { UserContext } from "../index";
 import { COLORS } from "../themes";
+import { validate } from "../helper/userFormsHelper";
+import { Link, useNavigate } from "react-router-dom";
+import { app } from "../firebase";
+import { getAuth, signInWithEmailAndPassword } from "firebase/auth";
+import GoogleSignIn from "../components/GoogleSignIn";
+import { LOG_IN_USER } from "../mutations/userMutations";
 import { useMutation } from "@apollo/client";
-import { useNavigate } from "react-router-dom";
-import GoogleAuthSignInUser from "../components/GoogleAuth";
 
-export default function SignInAccount() {
+export default function Login() {
   const [show, setShow] = useState(true);
   const [status, setStatus] = useState("");
-  const [statusTextColor, setStatusTextColor] = useState("");
+  // const [statusTextColor, setStatusTextColor] = useState("");
   const [nameTxtColor, setNameTxtColor] = useState("black");
   const [emailTxtColor, setEmailTxtColor] = useState("black");
   const [passTxtColor, setPassTxtColor] = useState("gray");
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  // const ctx = useContext(UserContext);
-  // console.log("ctx", ctx);
+  const ctx = useContext(UserContext);
   const navigate = useNavigate();
+  let id;
+  ctx.user.id ? (id = ctx.user.id) : (id = "bad-request");
 
-  const [createUser, { data, loading, error }] = useMutation(CREATE_USER);
-  if (error) console.error("Apollo Error", error);
-  if (loading) console.log("LOADING");
-  if (data) {
-    console.log("DATA PRESENT!!", data);
-    navigate(`/deposit/${data.createUser.id}`);
-  } else {
-    console.log("NO DATA");
-  }
+  let stateObj = { name, email, password };
+  let setStateObj = {
+    setStatus,
+    setNameTxtColor,
+    setEmailTxtColor,
+    setPassTxtColor,
+  };
 
   const nameStyles = {
     color: nameTxtColor,
@@ -45,99 +47,54 @@ export default function SignInAccount() {
     color: passTxtColor,
   };
 
-  function validate(field, label) {
-    console.log("---- validate ----");
+  // Firebase can check real password automatically so DONT need this
+  //   const [loginUser, { data, loading, error }] = useMutation(LOG_IN_USER);
+  //   if (loading) console.warn("LOADING");
+  //   if (error) console.error("Error LOG_IN_USER", error.message);
+  //   if (data) console.log("LOG_IN_USER data", data);
 
-    if (!field) {
-      setStatusTextColor("red");
-      setStatus(
-        `Error: ${
-          label[0].toUpperCase() + label.substring(1)
-        } must be filled out`
-      );
-      return false;
-    }
-
-    // Name Validation (No special characters or numbers)
-    if (field === name && !validator.matches(field, /[a-zA-Z ]+$/)) {
-      setStatusTextColor("red");
-      setNameTxtColor("red");
-      setStatus("Name must only contain letters");
-      return false;
-    } else {
-      setStatusTextColor("");
-      setNameTxtColor("black");
-    }
-
-    // Email Validation
-    if (field === email && !validator.isEmail(field)) {
-      console.log("EMAIL VALIDATION");
-      setStatusTextColor("red");
-      setEmailTxtColor("red");
-      setStatus("Email not valid. Try Again");
-      return false;
-    } else {
-      setStatusTextColor("");
-      setEmailTxtColor("black");
-    }
-
-    // Password Length Validation
-    if (field === password && field.length < 8) {
-      console.log("XDDDDXDXXDXDXD");
-      setStatusTextColor("red");
-      setPassTxtColor("red");
-      setStatus("Password must be at least 8 characters");
-      // document.documentElement.style.setProperty("--password-txt-color", "red");
-      return false;
-    } else {
-      setStatusTextColor("");
-      setPassTxtColor("gray");
-    }
-
-    // If Validation Passed:
-    // in case already present from previous validation fail:
-    setStatus("");
-    // document.documentElement.style.setProperty("--password-txt-color", "gray");
-    return true;
-  }
-
-  function handleCreate() {
-    console.log("handleCreate", name, email, password);
+  function handleLogin() {
+    console.log("handleLogin", name, email, password);
     // e.preventDefault();
-    if (!validate(name, "name")) return;
-    if (!validate(email, "email")) return;
-    if (!validate(password, "password")) return;
+    if (!validate(name, "name", stateObj, setStateObj)) return;
+    if (!validate(email, "email", stateObj, setStateObj)) return;
+    if (!validate(password, "password", stateObj, setStateObj)) return;
 
     console.log("Passed validation!!");
 
-    try {
-      createUser({ variables: { user: { name, email, password } } });
-    } catch (err) {
-      console.error("createUser Error", err.message);
-    }
+    const firebaseAuth = getAuth(app);
+    signInWithEmailAndPassword(firebaseAuth, email, password)
+      .then((userCredential) => {
+        // User is now Logged In
+        const user = userCredential.user;
+        console.log("Logged In User", user);
 
-    setShow(false);
-  }
-
-  function clearForm() {
-    setName("");
-    setEmail("");
-    setPassword("");
-    setShow(true);
+        setShow(false);
+      })
+      .catch((err) => {
+        console.error("Error loggin in user", err.message);
+        setStatus("Login Failed. Please Try Again");
+      });
   }
 
   return (
     <>
-      <NavBar />
+      <NavBar id={id} />
       <div className="page-wrapper">
-        <h1>Create Account</h1>
+        <h1 style={{ fontWeight: 900, marginBottom: "0.5rem" }}>Log In</h1>
+        <h5 style={{ marginTop: "1rem" }}>
+          Don't have an accout?{" "}
+          <Link to="/createaccount" className="link">
+            Sign up Here!
+          </Link>
+        </h5>
 
         <CustomCard
-          bgHeaderColor={COLORS.cardHeader}
-          header="Create Account"
+          // bgHeaderColor={COLORS.cardHeader}
+          // header="Create Account"
           bgColor={COLORS.cardBackground}
           statusText={status}
-          statusColor={statusTextColor}
+          statusColor={COLORS.modalHeader}
           body={
             show ? (
               <>
@@ -194,12 +151,9 @@ export default function SignInAccount() {
                       </Form.Text>
                     </Form.Group>
 
-                    <SubmitBtn
-                      name="Create Account"
-                      handleClick={handleCreate}
-                    />
+                    <SubmitBtn name="Log In" handleClick={handleLogin} />
                   </Form>
-                  <GoogleAuthCreateUser />
+                  <GoogleSignIn />
                 </Card.Body>
               </>
             ) : (
@@ -208,10 +162,6 @@ export default function SignInAccount() {
                   <h5 style={{ textAlign: "center", fontSize: "1.5em" }}>
                     Success
                   </h5>
-                  <SubmitBtn
-                    name="Add Another Account"
-                    handleClick={clearForm}
-                  />
                 </Card.Body>
               </>
             )

@@ -1,8 +1,7 @@
-@import url("https://fonts.googleapis.com/css2?family=Playfair+Display&display=swap");
-
+@import url("https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&display=swap");
 :root {
   /* font-family: Inter, Avenir, Helvetica, Arial, sans-serif, "Syne" !important; */
-  /* font-size: 16px;
+  font-size: 16px;
   line-height: 24px;
   font-weight: 400;
 
@@ -52,7 +51,7 @@ button:focus-visible {
 
 @media (prefers-color-scheme: light) {
   :root {
-    background-color: #f0f0f0;
+    background-color: #fcf6f5ff;
     height: 100%;
     overflow: auto;
   }
@@ -75,5 +74,4 @@ button:focus-visible {
   button {
     background-color: #f9f9f9;
   }
-  */
 }

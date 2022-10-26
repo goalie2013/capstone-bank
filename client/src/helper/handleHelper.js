@@ -16,9 +16,9 @@ export function handleChange(e, setValue, setStatus, setShow, setTextColor) {
     setShow(false);
     return false;
   }
-  if (!target.value) {
-    setTextColor("red");
-    setStatus(`Value is empty`);
+  if (!target.value || target.value === "-" || parseInt(target.value) === 0) {
+    // setTextColor("red");
+    // setStatus(`Value is empty`);
     setShow(false);
     return false;
   }

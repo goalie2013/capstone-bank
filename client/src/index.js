@@ -11,7 +11,7 @@ import {
 } from "@apollo/client";
 import { onError } from "@apollo/client/link/error";
 
-// export const UserContext = React.createContext(null);
+export const UserContext = React.createContext(null);
 
 // Apollo Client cache
 //TODO: Auth for Token

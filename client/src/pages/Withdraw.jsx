@@ -1,22 +1,76 @@
-import React, { useState, useContext, useRef } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import NavBar from "../components/NavBar";
 import CustomCard from "../components/Card";
 import Form from "react-bootstrap/Form";
 import SubmitBtn from "../components/SubmitBtn";
-import { handleChange, handleKeyPress } from "../helper/handleHelper";
-import { QueryGetUser } from "../helper/queryMutationHelper";
+import { UserContext } from "../index";
+import PageNotFound from "../components/PageNotFound";
+import { handleChange } from "../helper/handleHelper";
+import {
+  QueryGetUser,
+  MutationUpdateUser,
+  QueryGetUserByEmail,
+} from "../helper/queryMutationHelper";
 import dayjs from "dayjs";
 import { COLORS } from "../themes";
 import { useParams } from "react-router-dom";
+import axios from "axios";
 
-export default function Withdraw() {
-  const [show, setShow] = useState(false);
+export default function Withdraw({ token, userId, userEmail }) {
+  console.log("----- WITHDRAW -----");
+  const [showSubmit, setShowSubmit] = useState(false);
   const [status, setStatus] = useState("");
   const [withdrawValue, setWithdrawValue] = useState("");
   const [textColor, setTextColor] = useState("");
   const { id } = useParams();
+  let balance, transactions;
+  const ctx = useContext(UserContext);
+  console.log("ctx", ctx);
 
-  let { balance, transactions, updateUser } = QueryGetUser(id);
+  if (!ctx.user.id) ctx.user.id = userId;
+
+  useEffect(() => {
+    if (token) fetchData(token);
+  }, [token]);
+
+  const fetchData = async (token) => {
+    console.log("fetchData token", token);
+    const result = await axios.get("http://localhost:5050/api/todos", {
+      headers: {
+        Authorization: `Bearer + ${token}`,
+      },
+    });
+    console.log(result.data);
+  };
+
+  // Check if userId matches url parameter; if NOT --> Not Authorized
+  console.log("USER ID", userId);
+  console.log("PARAM ID", id);
+  if (userId !== id) return <PageNotFound id={userId} />;
+
+  // Update User Mutation
+  const updateUser = MutationUpdateUser(id, userEmail);
+
+  // Get User Query
+  try {
+    QueryGetUserByEmail(userEmail);
+    let { queriedId, currentBalance, xTransactions } = QueryGetUser(id);
+    // userId = queriedId;
+    balance = currentBalance;
+    transactions = xTransactions;
+  } catch (err) {
+    console.error("ERRORROROROROR", err.message);
+
+    if (err.message == "Data is null") {
+      console.error("DATA IS NULL");
+      // setShowPage(false);
+      return <PageNotFound id={id} />;
+    } else if (err.message == "Error getting User Data") {
+      return (
+        <h1 style={{ color: "red" }}>ERROR GETTING USER DATA: {err.message}</h1>
+      );
+    }
+  }
 
   function handleWithdraw() {
     console.log("-- handleWithdraw --");
@@ -27,7 +81,7 @@ export default function Withdraw() {
     if (balance - withdrawValue < 0) {
       setTextColor("red");
       setStatus(`Transaction FAILED. Balance cannot be negative`);
-      setShow(false);
+      setShowSubmit(false);
       return false;
     }
 
@@ -46,15 +100,15 @@ export default function Withdraw() {
       console.error("Withdraw updateUser Error", err.message);
     }
 
-    setTextColor("green");
+    setTextColor(COLORS.transactionComplete);
     setStatus("Withdraw Complete!");
-    setShow(false);
+    setShowSubmit(false);
     setWithdrawValue("");
   }
 
   return (
     <>
-      <NavBar userId={id} />
+      <NavBar id={userId} />
       <div className="page-wrapper">
         <h1>Withdraw</h1>
         <CustomCard
@@ -86,14 +140,14 @@ export default function Withdraw() {
                       e,
                       setWithdrawValue,
                       setStatus,
-                      setShow,
+                      setShowSubmit,
                       setTextColor
                     )
                   }
                 />
               </Form.Group>
 
-              {show ? (
+              {showSubmit ? (
                 <SubmitBtn name="Withdraw" handleClick={handleWithdraw} />
               ) : (
                 <SubmitBtn name="Withdraw" disabled="true" />

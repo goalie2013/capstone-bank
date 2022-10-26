@@ -7,11 +7,11 @@ export default function SubmitBtn(props) {
     <Button
       disabled
       variant="primary"
-      className="submit-btn py-3"
+      className="submit-btn py-3 disabled"
       style={{
-        backgroundColor: `${COLORS.btnColor}`,
+        backgroundColor: COLORS.disabledBtnColor,
         borderColor: "#e1e2e2",
-        color: "#000",
+        color: COLORS.lighterTheme,
       }}
       onClick={props.handleClick}
     >
@@ -22,9 +22,10 @@ export default function SubmitBtn(props) {
       variant="primary"
       className="submit-btn py-3"
       style={{
-        backgroundColor: `${COLORS.btnColor}`,
-        borderColor: "#e1e2e2",
-        color: "#000",
+        backgroundColor: COLORS.darkerTheme,
+        borderColor: COLORS.darkerTheme,
+        color: COLORS.lighterTheme,
+        boxShadow: "0 0.5rem 1.25rem rgba(0, 0, 0, 0.3)",
       }}
       onClick={props.handleClick}
       type="submit"
