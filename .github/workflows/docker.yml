@@ -27,7 +27,7 @@ jobs:
         id: vars
         run: echo ::set-output name=tag::$(echo ${GITHUB_REF:10})
       - name: Build the tagged Docker image server
-        run: docker build -t capstone-bank/capstone-bank .
+        run: docker build -t capstone-bank/capstone-bank/server .
       - name: Build the tagged Docker image client
         run: docker build -t capstone/client .
       - name: Push the tagged Docker image
