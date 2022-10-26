@@ -32,4 +32,4 @@ COPY . .
 EXPOSE 5050
 
 # CMD is Entry Point of application
-CMD ["npm", "run", "start"]
+CMD ["npm", "start"]
