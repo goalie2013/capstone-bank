@@ -6,7 +6,8 @@
   "scripts": {
     "server": "node server/graphql.js",
     "client": "npm start --prefix client",
-    "dev": "concurrently \"npm run server\" \"npm run client\""
+    "dev": "concurrently \"npm run server\" \"npm run client\"",
+    "test": "jest"
   },
   "author": "gabgrin",
   "license": "MIT",
@@ -15,6 +16,7 @@
   },
   "devDependencies": {
     "dotenv": "^16.0.3",
+    "jest": "^29.2.2",
     "nodemon": "^2.0.20"
   }
 }
