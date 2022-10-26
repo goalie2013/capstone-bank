@@ -34,5 +34,3 @@ jobs:
         run: docker push capstone-bank/server
       - name: Push the tagged Docker image client
         run: docker push capstone-bank/client
-      options:
-      docker: true
