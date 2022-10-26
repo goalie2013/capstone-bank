@@ -31,4 +31,4 @@ jobs:
       - name: Build the tagged Docker image client
         run: docker build -t capstone-bank/client ./client
       - name: Push the tagged Docker image
-        run: docker push gabgrin2013/capstone-bank
+        run: docker push capstone-bank
