@@ -6,8 +6,7 @@
   "scripts": {
     "server": "node server/graphql.js",
     "client": "npm start --prefix client",
-    "dev": "concurrently \"npm run server\" \"npm run client\"",
-    "test": "npm client/test"
+    "dev": "concurrently \"npm run server\" \"npm run client\""
   },
   "author": "gabgrin",
   "license": "MIT",
