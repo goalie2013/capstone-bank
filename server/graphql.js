@@ -18,6 +18,9 @@ app.use(bodyParser.json());
 app.use(express.static("public"));
 
 // app.use(middleware.decodeToken);
+app.get("/", (req, res) => {
+  res.send("Hello from Express!");
+});
 
 // Connect to Database
 try {
@@ -57,4 +60,4 @@ app.get("api/todos", (req, res) => {
   });
 });
 
-app.listen(port, () => console.log(`Server running on port ${port}`));
+app.listen(port || 5000, () => console.log(`Server running on port ${port}`));
