@@ -4,7 +4,7 @@ const cors = require("cors");
 const { graphqlHTTP } = require("express-graphql");
 const dal = require("./dalNew");
 const bodyParser = require("body-parser");
-const middleware = require("./middleware/auth");
+// const middleware = require("./middleware/auth");
 const { schema, root } = require("./schema/graphqlSchema");
 const port = process.env.PORT;
 console.log("port", port);
