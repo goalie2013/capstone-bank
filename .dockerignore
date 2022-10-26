@@ -1,12 +1,12 @@
 .dockerignore
 .git
 **/node_modules
-*/.env*
 **/.gitignore
-**/Dockerfile*
-**/docker-compose*
+**/Dockerfile
+**/docker-compose
 README.md
 **/.project
 **/.settings
 **/.vs
 **/.vscode
+node_modules

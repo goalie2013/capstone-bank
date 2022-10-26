@@ -1,16 +1,18 @@
 FROM node:19-alpine
 
 # Add working directory
-WORKDIR /server
+WORKDIR /usr/src/app
 # Copy npm dependencies (Host -> Docker)
-COPY package.json /server/package.json
+COPY package*.json ./
 
 # Install dependencies
 RUN npm install
-# Copy app source code
-COPY . /server
+
+# Copy local files to app source code
+COPY . .
 
 #Expose port and start the application
-# CMD is Entry Point of application
 EXPOSE 5050
+
+# CMD is Entry Point of application
 CMD ["npm", "start"]
