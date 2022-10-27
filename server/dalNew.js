@@ -49,6 +49,7 @@ const connectDB = async () => {
 /////////////////////////////////////////////////
 function createUser({ name, email, password }) {
   console.log("createUser()");
+  console.log(typeof User);
   // Generate Salt
   const salt = bcrypt.genSaltSync(saltRounds);
   // Hash Password
