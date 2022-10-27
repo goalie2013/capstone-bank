@@ -48,8 +48,6 @@
     ]
   },
   "devDependencies": {
-    "@graphql-tools/mock": "^8.7.6",
-    "@graphql-tools/schema": "^9.0.4",
     "@testing-library/jest-dom": "^5.16.5",
     "@testing-library/react": "^13.4.0"
   }
