@@ -64,11 +64,16 @@ function createUser({ name, email, password }) {
   newUser.id = newUser._id;
 
   console.log("newUser", newUser);
+  console.log(typeof newUser);
 
   return new Promise((resolve, reject) => {
-    newUser.save((err) => {
-      err ? reject(err) : resolve(newUser);
-    });
+    // newUser.save((err) => {
+    //   err ? reject(err) : resolve(newUser);
+    // });
+    newUser
+      .save()
+      .then((user) => resolve(user))
+      .catch((err) => reject(err));
   });
 }
 

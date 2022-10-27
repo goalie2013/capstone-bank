@@ -40,9 +40,6 @@ app.use(
   })
 );
 
-app.get("/h", (req, res) => {
-  res.send("Hello World!");
-});
 app.get("api/todos", (req, res) => {
   console.log("hey");
   return res.json({
