@@ -1,13 +1,14 @@
 // DAL = Data Abstraction Layer
 // ** Keeps index.js independent of what DB is used **
 // This DAL is specific to MongoDB
+import { User } from "./schema/userSchema";
 const mongoose = require("mongoose");
 const models = require("./schema/userSchema");
 const colors = require("colors");
 const bcrypt = require("bcrypt");
 const saltRounds = 10;
 
-const User = models.User;
+// const User = models.User;
 
 // let db = null;
 // Connect to MongoDB
