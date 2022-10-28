@@ -121,15 +121,15 @@ const root = {
       console.error("Error", err.message);
     }
   },
-  loginUser: async ({ email, password }) => {
-    try {
-      const user = await dal.loginUser(email, password);
-      console.log("Logged In User", user);
-      return user;
-    } catch (err) {
-      console.error("Error logging in user", colors.red(err.message));
-    }
-  },
+  // loginUser: async ({ email, password }) => {
+  //   try {
+  //     const user = await dal.loginUser(email, password);
+  //     console.log("Logged In User", user);
+  //     return user;
+  //   } catch (err) {
+  //     console.error("Error logging in user", colors.red(err.message));
+  //   }
+  // },
 };
 
 module.exports = { schema, root };

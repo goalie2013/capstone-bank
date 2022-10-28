@@ -169,7 +169,7 @@ module.exports = {
   getUser,
   getUserByEmail,
   getAllUsers,
-  loginUser,
+  // loginUser,
   updateUser,
   deleteUser,
 };
