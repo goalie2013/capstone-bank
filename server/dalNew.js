@@ -20,7 +20,6 @@ const saltRounds = 10;
 // });
 
 const connectDB = async () => {
-  console.log(process.env.MONGO_URI);
   try {
     console.log("connectDB()");
     const conn = await mongoose.connect(process.env.MONGO_ATLAS, {

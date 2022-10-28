@@ -1,11 +1,12 @@
 // DEVELOPMENT ONLY
-// require("dotenv").config();
+require("dotenv").config();
 const express = require("express");
 const cors = require("cors");
 const { graphqlHTTP } = require("express-graphql");
 const dal = require("./dalNew");
 const bodyParser = require("body-parser");
 const jwt = require("jsonwebtoken");
+const { verifyTokenExists } = require("./authServer");
 // const middleware = require("./middleware/auth");
 const { schema, root } = require("./schema/graphqlSchema");
 const port = process.env.PORT;
@@ -13,7 +14,7 @@ console.log("port", port);
 
 const app = express();
 // CORS FOR DEVELOPMENT ONLY
-// app.use(cors());
+app.use(cors());
 
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
@@ -27,31 +28,33 @@ app.get("/", (req, res) => {
 // Create & Send JWT Token on Login
 app.post("/login", (req, res) => {
   // Authenticated user
-  const user = req.body.user;
+  // const user = req.body.user;
+  const user = req.body;
   if (!user) res.sendStatus(400);
 
-  const jwtToken = jwt.sign(user, process.env.TOKEN_SECRET, (err, token) => {
-    res.json({ token: jwtToken });
-  });
+  jwt.sign(
+    user,
+    process.env.TOKEN_SECRET,
+    { expiresIn: "1h" },
+    (err, token) => {
+      if (err) return res.send(err.message);
+      res.json({ token });
+    }
+  );
 });
 
-// Get JWT, Verify it, and return user
-function authenticateToken(req, res, next) {
-  // get token from "Bearer TOKEN" header
-  const authHeader = req.headers["authorization"];
-  const jwtToken = authHeader && authHeader.split(" ")[1];
-
-  if (jwtToken === null) return res.sendStatus(401);
-
-  jwt.verify(jwtToken, process.env.TOKEN_SECRET, (err, decoded) => {
-    if (err) return res.sendStatus(403);
-
-    // Token Valid!!
-    // req.user = user;
-    console.log("decoded", decoded);
-    next();
+app.post("/transaction", verifyTokenExists, (req, res) => {
+  jwt.verify(req.token, process.env.TOKEN_SECRET, (err, data) => {
+    if (err) {
+      res.sendStatus(403);
+    } else {
+      res.json({
+        message: "User Authorized...",
+        data,
+      });
+    }
   });
-}
+});
 
 // Connect to Database
 try {
@@ -64,7 +67,7 @@ try {
 
 app.use(
   "/graphql",
-  authenticateToken,
+  // authenticateToken,
   graphqlHTTP({
     graphiql: process.env.NODE_ENV === "development" || "development",
     schema: schema,

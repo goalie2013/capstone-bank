@@ -42,3 +42,19 @@ function authenticateToken(req, res, next) {
 }
 
 app.listen(port || 4001, () => console.log(`Server running on port ${port}`));
+
+// Get JWT, Verify it, and return user
+function verifyTokenExists(req, res, next) {
+  // get token from "Bearer TOKEN" header
+  const authHeader = req.headers["authorization"];
+  const jwtToken = authHeader && authHeader.split(" ")[1];
+  console.log("jwtToken", jwtToken);
+
+  if (jwtToken === undefined) return res.sendStatus(403);
+
+  // Token Valid!!
+  req.token = jwtToken;
+  next();
+}
+
+module.exports = { verifyTokenExists };
