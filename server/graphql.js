@@ -28,6 +28,7 @@ app.get("/", (req, res) => {
 app.post("/login", (req, res) => {
   // Authenticated user
   const user = req.body.user;
+  if (!user) res.sendStatus(400);
 
   const jwtToken = jwt.sign(user, process.env.TOKEN_SECRET, (err, token) => {
     res.json({ token: jwtToken });
