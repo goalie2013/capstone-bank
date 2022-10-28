@@ -113,19 +113,19 @@ function getAllUsers() {
 /////////////////////////////////////////////////
 // Login User
 /////////////////////////////////////////////////
-//TODO:
-async function loginUser(email, password = "") {
-  console.log("loginUser FUNCTION");
-  const user = await getUserByEmail(email);
-  const hash = user.password;
-  const originalUser = { ...user, password };
+// DONT NEED BC FIREBASE AUTH HANDLES LOGIN
+// async function loginUser(email, password = "") {
+//   console.log("loginUser FUNCTION");
+//   const user = await getUserByEmail(email);
+//   const hash = user.password;
+//   const originalUser = { ...user, password };
 
-  return new Promise((resolve, reject) => {
-    if (password && hash && bcrypt.compareSync(password, hash))
-      resolve(originalUser);
-    reject("User Not Found");
-  });
-}
+//   return new Promise((resolve, reject) => {
+//     if (password && hash && bcrypt.compareSync(password, hash))
+//       resolve(originalUser);
+//     reject("User Not Found");
+//   });
+// }
 
 /////////////////////////////////////////////////
 // Update User
