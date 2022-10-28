@@ -30,6 +30,7 @@ app.post("/login", (req, res) => {
   // Authenticated user
   // const user = req.body.user;
   const user = req.body;
+  console.log("/login user data", user);
   if (!user) res.sendStatus(400);
 
   jwt.sign(
@@ -43,9 +44,10 @@ app.post("/login", (req, res) => {
   );
 });
 
-app.post("/transaction", verifyTokenExists, (req, res) => {
+app.post("/authorize", verifyTokenExists, (req, res) => {
   jwt.verify(req.token, process.env.TOKEN_SECRET, (err, data) => {
     if (err) {
+      console.error("ERROR /authorize", err.message);
       res.sendStatus(403);
     } else {
       res.json({
