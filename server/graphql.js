@@ -39,6 +39,7 @@ app.post("/login", (req, res) => {
     { expiresIn: "1h" },
     (err, token) => {
       if (err) return res.send(err.message);
+      console.log("new token", token);
       res.json({ token });
     }
   );
@@ -78,5 +79,5 @@ app.use(
 );
 
 app.listen(process.env.PORT || 5000, "0.0.0.0", () =>
-  console.log(`Server running on port ${port}`)
+  console.log(`My Server running on port ${process.env.PORT}`)
 );
