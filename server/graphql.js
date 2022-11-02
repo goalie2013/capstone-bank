@@ -9,7 +9,7 @@ const jwt = require("jsonwebtoken");
 const { verifyTokenExists } = require("./authServer");
 // const middleware = require("./middleware/auth");
 const { schema, root } = require("./schema/graphqlSchema");
-const port = process.env.PORT;
+const port = process.env.SERVER_PORT;
 console.log("port", port);
 
 const app = express();
