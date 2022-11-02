@@ -41,7 +41,7 @@ function authenticateToken(req, res, next) {
   });
 }
 
-app.listen(port || 4001, () => console.log(`Server running on port ${port}`));
+// app.listen(port || 4001, () => console.log(`Server running on port ${port}`));
 
 // Get JWT, Verify it, and return user
 function verifyTokenExists(req, res, next) {
