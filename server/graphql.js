@@ -13,15 +13,10 @@ const port = process.env.PORT;
 console.log("port", port);
 
 const generateToken = (user, secret, expiresInNum) => {
-  return jwt.sign(
-    user,
-    process.env.secret,
-    { expiresIn: expiresInNum },
-    (err, token) => {
-      if (err) return res.send(err.message);
-      console.log(`new ${secret}`, token);
-    }
-  );
+  return jwt.sign(user, secret, { expiresIn: expiresInNum }, (err, token) => {
+    if (err) return res.send(err.message);
+    console.log(`new ${secret}`, token);
+  });
 };
 const app = express();
 // CORS FOR DEVELOPMENT ONLY
@@ -44,9 +39,9 @@ app.post("/login", (req, res) => {
   console.log("/login user data", user);
   if (!user) res.sendStatus(400);
 
-  const accessToken = generateToken(user, TOKEN_SECRET, 1800);
+  const accessToken = generateToken(user, process.env.TOKEN_SECRET, 1800);
 
-  const refreshToken = generateToken(user, REFRESH__SECRET, "1h");
+  const refreshToken = generateToken(user, process.env.REFRESH__SECRET, "1h");
 
   res.json({ accessToken, refreshToken });
 });
