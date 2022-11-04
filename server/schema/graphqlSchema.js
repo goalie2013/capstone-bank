@@ -87,18 +87,11 @@ const root = {
     // console.log(args.user);
     // return user;
     try {
-      // const hash = await new Promise((resolve, reject) => {
-      //   bcrypt.hash(args.user.password, saltRounds, (err, hash) => {
-      //     if (err) reject(err);
-      //     resolve(hash);
-      //   });
-      // });
-      // const user = await dal.createUser(args.user, hash);
       const user = await dal.createUser(args.user);
       console.log("returning user...", user);
       return user;
     } catch (err) {
-      console.error("Error", colors.red(err.message));
+      console.error("Error createUser", colors.red(err.message));
     }
   },
   updateUser: async (args) => {
