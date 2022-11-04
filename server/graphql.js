@@ -34,25 +34,6 @@ try {
   }
 }
 
-// Use Refresh Token to create new Access Token
-app.post("/token", async (req, res) => {
-  const refreshToken = req.body.token;
-  const tokenObj = await dal.getAllRefreshTokens();
-  const tokenList = [...tokenObj[0]["tokens"]];
-
-  if (refreshToken) return res.sendStatus(401);
-  if (!tokenList.includes(refreshToken)) return res.sendStatus(403);
-  jwt.verify(refreshToken, process.env.REFRESH_SECRET, (err, user) => {
-    if (err) return res.sendStatus(403);
-    console.log("/token user: ", user);
-    //   const accessToken = generateToken(
-    //     { name: user.name },
-    //     process.env.REFRESH_SECRET,
-    //     3
-    //   );
-  });
-});
-
 // Create & Send JWT Token on Login
 app.post("/login", async (req, res) => {
   // Authenticated user
@@ -90,6 +71,26 @@ app.post("/authorize", verifyTokenExists, (req, res) => {
         data,
       });
     }
+  });
+});
+
+// Use Refresh Token to create new Access Token
+app.post("/newtoken", async (req, res) => {
+  console.log("/newtoken");
+  const refreshToken = req.body.token;
+  const tokenObj = await dal.getAllRefreshTokens();
+  const tokenList = [...tokenObj[0]["tokens"]];
+
+  if (refreshToken == null) return res.sendStatus(401);
+  if (!tokenList.includes(refreshToken)) return res.sendStatus(403);
+  jwt.verify(refreshToken, process.env.REFRESH_SECRET, (err, user) => {
+    if (err) return res.sendStatus(403);
+    console.log("/token user: ", user);
+    //   const accessToken = generateToken(
+    //     { name: user.name },
+    //     process.env.REFRESH_SECRET,
+    //     3
+    //   );
   });
 });
 

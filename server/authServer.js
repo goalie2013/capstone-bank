@@ -52,7 +52,7 @@ function verifyTokenExists(req, res, next) {
   const jwtToken = authHeader && authHeader.split(" ")[1];
   console.log("jwtToken", jwtToken);
 
-  if (jwtToken === undefined) return res.sendStatus(403);
+  if (jwtToken === undefined) return res.sendStatus(401);
 
   // Token Valid!!
   req.token = jwtToken;
