@@ -54,7 +54,7 @@ function verifyTokenExists(req, res, next) {
 
   if (jwtToken == null) {
     console.log("verifyTokenExists Should return 401");
-    return res.sendStatus(401);
+    res.sendStatus(401);
   }
 
   // Token Valid!!
