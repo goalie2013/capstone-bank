@@ -7,6 +7,7 @@ const dal = require("./dalNew");
 const bodyParser = require("body-parser");
 const jwt = require("jsonwebtoken");
 const { verifyTokenExists, generateToken } = require("./authServer");
+const { takeScreenshot } = require("./puppeteer");
 // const middleware = require("./middleware/auth");
 const { schema, root } = require("./schema/graphqlSchema");
 const port = process.env.PORT;
@@ -103,6 +104,10 @@ app.post("/newtoken", async (req, res) => {
     );
     res.json({ accessToken });
   });
+});
+
+app.get("/screenshot", (req, res) => {
+  takeScreenshot();
 });
 
 app.use(
