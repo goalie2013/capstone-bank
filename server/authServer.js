@@ -23,30 +23,11 @@ app.use(express.static("public"));
 //   res.json({ token: jwtToken });
 // });
 
-// Get JWT, Verify it, and return user
-function authenticateToken(req, res, next) {
-  // get token from "Bearer TOKEN" header
-  const authHeader = req.headers["authorization"];
-  const jwtToken = authHeader && authHeader.split(" ")[1];
-
-  if (jwtToken === null) return res.sendStatus(401);
-
-  jwt.verify(jwtToken, process.env.TOKEN_SECRET, (err, user) => {
-    if (err) return res.sendStatus(403);
-
-    // Token Valid!!
-    // req.user = user;
-    console.log("user", user);
-    next();
-  });
-}
-
 // app.listen(port || 4001, () => console.log(`Server running on port ${port}`));
 
 // Get JWT, Verify it, and return user
 function verifyTokenExists(req, res, next) {
   // get token from "Bearer TOKEN" header
-  // console.log("req", req);
   const authHeader = req.headers["authorization"];
   console.log("authHeader", authHeader);
   const jwtToken = authHeader && authHeader.split(" ")[1];

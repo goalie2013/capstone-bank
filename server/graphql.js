@@ -70,6 +70,7 @@ app.post("/authorize", verifyTokenExists, (req, res) => {
       console.error("ERROR /authorize", err.message);
       res.sendStatus(403);
     } else {
+      console.log("/authorize data", data);
       res.json({
         message: "User Authorized...",
         data,
