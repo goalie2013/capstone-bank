@@ -1,6 +1,7 @@
 const puppeteer = require("puppeteer");
 
 function takeScreenshot(date) {
+  console.log("takeScreenshot FUNCTION");
   (async () => {
     const browser = await puppeteer.launch();
     const page = await browser.newPage();
