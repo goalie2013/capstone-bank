@@ -46,7 +46,7 @@ function authenticateToken(req, res, next) {
 // Get JWT, Verify it, and return user
 function verifyTokenExists(req, res, next) {
   // get token from "Bearer TOKEN" header
-  console.log("req", req);
+  // console.log("req", req);
   const authHeader = req.headers["authorization"];
   console.log("authHeader", authHeader);
   const jwtToken = authHeader && authHeader.split(" ")[1];

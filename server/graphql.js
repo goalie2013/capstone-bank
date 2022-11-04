@@ -45,7 +45,7 @@ app.post("/login", (req, res) => {
 
   const refreshToken = jwt.sign(
     user,
-    process.env.REFRESH__SECRET,
+    process.env.REFRESH_SECRET,
     { expiresIn: "1h" },
     (err, token) => {
       if (err) return res.send(err.message);
