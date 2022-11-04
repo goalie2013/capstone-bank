@@ -1,6 +1,6 @@
 const puppeteer = require("puppeteer");
 
-export function takeScreenshot(date) {
+function takeScreenshot(date) {
   (async () => {
     const browser = await puppeteer.launch();
     const page = await browser.newPage();
@@ -20,3 +20,4 @@ export function takeScreenshot(date) {
     await browser.close();
   })();
 }
+module.exports = { takeScreenshot };
