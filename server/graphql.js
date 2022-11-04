@@ -36,21 +36,21 @@ app.post("/login", (req, res) => {
   const accessToken = jwt.sign(
     user,
     process.env.TOKEN_SECRET,
-    { expiresIn: 60 * 30 },
-    (err, token) => {
-      if (err) return res.send(err.message);
-      console.log("new access token", token);
-    }
+    { expiresIn: 60 * 30 }
+    // (err, token) => {
+    //   if (err) return res.send(err.message);
+    //   console.log("new access token", token);
+    // }
   );
 
   const refreshToken = jwt.sign(
     user,
     process.env.REFRESH_SECRET,
-    { expiresIn: "1h" },
-    (err, token) => {
-      if (err) return res.send("refresh Token Error:", err.message);
-      console.log("new refresh token", token);
-    }
+    { expiresIn: "1h" }
+    // (err, token) => {
+    //   if (err) return res.send("refresh Token Error:", err.message);
+    //   console.log("new refresh token", token);
+    // }
   );
 
   console.log("accessToken", accessToken);
