@@ -53,6 +53,9 @@ app.post("/login", (req, res) => {
     }
   );
 
+  console.log("accessToken", accessToken);
+  console.log("refreshToken", refreshToken);
+
   res.json({ accessToken: accessToken, refreshToken: refreshToken });
 });
 
