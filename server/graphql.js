@@ -48,7 +48,7 @@ app.post("/login", (req, res) => {
     process.env.REFRESH_SECRET,
     { expiresIn: "1h" },
     (err, token) => {
-      if (err) return res.send(err.message);
+      if (err) return res.send("refresh Token Error:", err.message);
       console.log("new refresh token", token);
     }
   );
