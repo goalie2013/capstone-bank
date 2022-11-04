@@ -59,4 +59,13 @@ function verifyTokenExists(req, res, next) {
   next();
 }
 
-module.exports = { verifyTokenExists };
+function generateToken(user, secret, expiresInValue) {
+  return jwt.sign(user, secret, { expiresIn: expiresInValue });
+
+  // (err, token) => {
+  //   if (err) return res.send(err.message);
+  //   console.log("new access token", token);
+  // }
+}
+
+module.exports = { verifyTokenExists, generateToken };
