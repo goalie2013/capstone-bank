@@ -50,11 +50,11 @@ function getAllRefreshTokens() {
 }
 function addRefreshToken(token, tokenList) {
   console.log("addRefreshToken FUNCTION");
-  console.log(tokenList[0]["_id"]);
+  console.log(tokenList[0]["id"]);
 
   return new Promise((resolve, reject) => {
     RefreshToken.findByIdAndUpdate(
-      tokenList[0]["_id"],
+      tokenList[0]["id"],
       { tokens: [...tokenList[0]["tokens"], token] },
       (err, result) => {
         console.log("addRefreshToken result:", result);
