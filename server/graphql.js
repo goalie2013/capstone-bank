@@ -132,6 +132,7 @@ app.get("/screenshot", (req, res) => {
       res.send(pdf);
       await browser.close();
     } catch (err) {
+      console.error("/screenshot ERROR", err.message);
       res.sendStatus(503);
     }
   })();
