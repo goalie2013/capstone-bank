@@ -62,7 +62,7 @@ app.post("/login", async (req, res) => {
 
 app.post("/authorize", verifyTokenExists, (req, res) => {
   console.log("/authorize req.token", req.token);
-  if (jwtToken == null) return res.sendStatus(401);
+  if (req.token == null) return res.sendStatus(401);
 
   jwt.verify(req.token, process.env.TOKEN_SECRET, (err, data) => {
     if (err) {
