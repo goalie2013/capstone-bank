@@ -12,12 +12,6 @@ const { schema, root } = require("./schema/graphqlSchema");
 const port = process.env.PORT;
 console.log("port", port);
 
-const generateToken = (user, secret, expiresInNum) => {
-  return jwt.sign(user, secret, { expiresIn: expiresInNum }, (err, token) => {
-    if (err) return res.send(err.message);
-    console.log(`new ${secret}`, token);
-  });
-};
 const app = express();
 // CORS FOR DEVELOPMENT ONLY
 app.use(cors());
@@ -39,9 +33,25 @@ app.post("/login", (req, res) => {
   console.log("/login user data", user);
   if (!user) res.sendStatus(400);
 
-  const accessToken = generateToken(user, process.env.TOKEN_SECRET, 1800);
+  const accessToken = jwt.sign(
+    user,
+    process.env.TOKEN_SECRET,
+    { expiresIn: 60 * 30 },
+    (err, token) => {
+      if (err) return res.send(err.message);
+      console.log("new access token", token);
+    }
+  );
 
-  const refreshToken = generateToken(user, process.env.REFRESH__SECRET, "1h");
+  const refreshToken = jwt.sign(
+    user,
+    process.env.REFRESH__SECRET,
+    { expiresIn: "1h" },
+    (err, token) => {
+      if (err) return res.send(err.message);
+      console.log("new refresh token", token);
+    }
+  );
 
   res.json({ accessToken, refreshToken });
 });
