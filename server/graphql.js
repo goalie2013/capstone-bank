@@ -8,6 +8,8 @@ const bodyParser = require("body-parser");
 const jwt = require("jsonwebtoken");
 const { verifyTokenExists, generateToken } = require("./authServer");
 const { takeScreenshot } = require("./puppeteer");
+const puppeteer = require("puppeteer-core");
+
 // const middleware = require("./middleware/auth");
 const { schema, root } = require("./schema/graphqlSchema");
 const port = process.env.PORT;
