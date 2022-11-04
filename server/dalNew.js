@@ -51,10 +51,14 @@ function getAllRefreshTokens() {
 function addRefreshToken(token, tokenList) {
   console.log("addRefreshToken FUNCTION");
   return new Promise((resolve, reject) => {
-    User.findOneAndUpdate(tokenList, { ...tokenList, token }, (err, result) => {
-      console.log("addRefreshToken result:", result);
-      err ? reject(err) : resolve(result);
-    });
+    RefreshToken.findOneAndUpdate(
+      tokenList,
+      { ...tokenList, token },
+      (err, result) => {
+        console.log("addRefreshToken result:", result);
+        err ? reject(err) : resolve(result);
+      }
+    );
   });
 
   return new Promise((resolve, reject) => {
