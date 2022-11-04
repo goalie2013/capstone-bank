@@ -41,7 +41,8 @@ const connectDB = async () => {
   });
 };
 
-function addRefreshToken(refreshToken) {
+export function addRefreshToken(refreshToken) {
+  console.log("addRefreshToken FUNCTION");
   let newToken = new RefreshToken(refreshToken);
 
   return new Promise((resolve, reject) => {
