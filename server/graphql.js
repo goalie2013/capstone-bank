@@ -53,7 +53,7 @@ app.post("/login", (req, res) => {
     }
   );
 
-  res.json({ accessToken, refreshToken });
+  res.json({ accessToken: accessToken, refreshToken: refreshToken });
 });
 
 app.post("/authorize", verifyTokenExists, (req, res) => {
