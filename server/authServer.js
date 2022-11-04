@@ -50,7 +50,7 @@ function verifyTokenExists(req, res, next) {
   const authHeader = req.headers["authorization"];
   console.log("authHeader", authHeader);
   const jwtToken = authHeader && authHeader.split(" ")[1];
-  console.log("jwtToken", jwtToken);
+  console.log("jwtToken", jwtToken, typeof jwtToken);
 
   if (jwtToken == null) {
     console.log("verifyTokenExists Should return 401");
