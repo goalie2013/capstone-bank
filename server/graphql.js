@@ -65,15 +65,15 @@ app.post("/authorize", verifyTokenExists, (req, res) => {
   console.log("/authorize req.token", req.token);
   if (req.token == null) res.sendStatus(401);
 
-  jwt.verify(req.token, process.env.TOKEN_SECRET, (err, data) => {
+  jwt.verify(req.token, process.env.TOKEN_SECRET, (err, user) => {
     if (err) {
       console.error("ERROR /authorize", err.message);
       res.sendStatus(403);
     } else {
-      console.log("/authorize data", data);
+      console.log("/authorize data", user);
       res.json({
         message: "User Authorized...",
-        data,
+        user,
       });
     }
   });
