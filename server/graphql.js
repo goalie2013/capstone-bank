@@ -85,6 +85,9 @@ app.post("/newtoken", async (req, res) => {
   const tokenObj = await dal.getAllRefreshTokens();
   const tokenList = [...tokenObj[0]["tokens"]];
 
+  console.log("/newtoken refreshToken", refreshToken);
+  console.log("/newtoken tokenList[-1]", tokenList[-1]);
+
   if (refreshToken == null) return res.sendStatus(401);
   if (!tokenList.includes(refreshToken)) return res.sendStatus(403);
   jwt.verify(refreshToken, process.env.REFRESH_SECRET, (err, user) => {
