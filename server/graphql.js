@@ -25,6 +25,11 @@ app.get("/", (req, res) => {
   res.send("Hello from Express!");
 });
 
+// Use Refresh Token to create new Access Token
+app.post("/token", (req, res) => {
+  const refreshToken = req.body.token;
+});
+
 // Create & Send JWT Token on Login
 app.post("/login", (req, res) => {
   // Authenticated user
@@ -54,7 +59,7 @@ app.post("/login", (req, res) => {
   );
 
   console.log("accessToken", accessToken);
-  console.log("refreshToken", refreshToken);
+  console.log("refreshToken", typeof refreshToken, refreshToken);
 
   res.json({ accessToken: accessToken, refreshToken: refreshToken });
 });
