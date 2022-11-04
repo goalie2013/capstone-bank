@@ -42,7 +42,7 @@ function authenticateToken(req, res, next) {
 }
 
 // app.listen(port || 4001, () => console.log(`Server running on port ${port}`));
-/deleteAccount/63633e3cf931ab1bf1fe4484
+
 // Get JWT, Verify it, and return user
 function verifyTokenExists(req, res, next) {
   // get token from "Bearer TOKEN" header
