@@ -107,13 +107,14 @@ app.post("/newtoken", async (req, res) => {
 });
 
 app.get("/screenshot", (req, res) => {
+  const { id, date, type } = req.body;
   (async () => {
     const browser = await puppeteer.launch();
     const page = await browser.newPage();
-    await page.goto(`https://betterbankingapp.net/deposit/${userId}`);
+    await page.goto(`https://betterbankingapp.net/deposit/${id}`);
     await page.emulateMediaType("screen");
     const pdf = await page.pdf({
-      path: `${date}.pdf`,
+      path: `${type}${date}.pdf`,
       format: "Letter",
       margin: {
         top: "20px",
