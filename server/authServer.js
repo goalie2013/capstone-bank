@@ -52,7 +52,7 @@ function verifyTokenExists(req, res, next) {
   const jwtToken = authHeader && authHeader.split(" ")[1];
   console.log("jwtToken", jwtToken, typeof jwtToken);
 
-  if (jwtToken == null) {
+  if (jwtToken == "null") {
     console.log("verifyTokenExists Should return 401");
     res.sendStatus(401);
   }
