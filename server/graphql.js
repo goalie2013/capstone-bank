@@ -112,24 +112,28 @@ app.post("/newtoken", async (req, res) => {
 app.get("/screenshot", (req, res) => {
   const { id, date, type } = req.body;
   (async () => {
-    const browser = await puppeteer.launch({
-      executablePath: executablePath(),
-    });
-    const page = await browser.newPage();
-    await page.goto(`https://betterbankingapp.net/deposit/${id}`);
-    await page.emulateMediaType("screen");
-    const pdf = await page.pdf({
-      path: `${type}${date}.pdf`,
-      format: "Letter",
-      margin: {
-        top: "20px",
-        bottom: "40px",
-        left: "20px",
-        right: "20px",
-      },
-    });
-    res.send(pdf);
-    await browser.close();
+    try {
+      const browser = await puppeteer.launch({
+        executablePath: executablePath(),
+      });
+      const page = await browser.newPage();
+      await page.goto(`https://betterbankingapp.net/deposit/${id}`);
+      await page.emulateMediaType("screen");
+      const pdf = await page.pdf({
+        path: `${type}${date}.pdf`,
+        format: "Letter",
+        margin: {
+          top: "20px",
+          bottom: "40px",
+          left: "20px",
+          right: "20px",
+        },
+      });
+      res.send(pdf);
+      await browser.close();
+    } catch (err) {
+      res.sendStatus(503);
+    }
   })();
 });
 
