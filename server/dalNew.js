@@ -3,6 +3,7 @@
 // This DAL is specific to MongoDB
 const mongoose = require("mongoose");
 const { User } = require("./schema/userSchema");
+const { RefreshToken } = require("./schema/refreshtokenSchema");
 const colors = require("colors");
 const bcrypt = require("bcrypt");
 const saltRounds = 10;
@@ -31,7 +32,6 @@ const connectDB = async () => {
     );
   } catch (err) {
     console.error("connectDB Error", colors.red(err.message));
-    //TODO:Throw Error
     throw new Error("Error connecting to Database");
   }
 
@@ -41,7 +41,16 @@ const connectDB = async () => {
   });
 };
 
-// Asynchronous bc do NOT know when server will receive it and respond
+function addRefreshToken(refreshToken) {
+  let newToken = new RefreshToken(refreshToken);
+
+  return new Promise((resolve, reject) => {
+    newToken
+      .save()
+      .then((result) => resolve(result))
+      .catch((err) => reject(err));
+  });
+}
 
 /////////////////////////////////////////////////
 // Create a User Account
@@ -113,18 +122,6 @@ function getAllUsers() {
 // Login User
 /////////////////////////////////////////////////
 // DONT NEED BC FIREBASE AUTH HANDLES LOGIN
-// async function loginUser(email, password = "") {
-//   console.log("loginUser FUNCTION");
-//   const user = await getUserByEmail(email);
-//   const hash = user.password;
-//   const originalUser = { ...user, password };
-
-//   return new Promise((resolve, reject) => {
-//     if (password && hash && bcrypt.compareSync(password, hash))
-//       resolve(originalUser);
-//     reject("User Not Found");
-//   });
-// }
 
 /////////////////////////////////////////////////
 // Update User

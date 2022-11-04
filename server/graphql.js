@@ -25,13 +25,22 @@ app.get("/", (req, res) => {
   res.send("Hello from Express!");
 });
 
+// Connect to Database
+try {
+  dal.connectDB();
+} catch (err) {
+  if (err.message === "Error connecting to Database") {
+    res.status(500).send("500 Internal Server Error");
+  }
+}
+
 // Use Refresh Token to create new Access Token
 app.post("/token", (req, res) => {
   const refreshToken = req.body.token;
 });
 
 // Create & Send JWT Token on Login
-app.post("/login", (req, res) => {
+app.post("/login", async (req, res) => {
   // Authenticated user
   // const user = req.body.user;
   const user = req.body;
@@ -61,6 +70,13 @@ app.post("/login", (req, res) => {
   console.log("accessToken", accessToken);
   console.log("refreshToken", typeof refreshToken, refreshToken);
 
+  try {
+    const result = await dal.addRefreshToken(refreshToken);
+    console.log("addRefreshToken result", result);
+  } catch (err) {
+    console.error("addRefreshToken Error:", err.message);
+  }
+
   res.json({ accessToken: accessToken, refreshToken: refreshToken });
 });
 
@@ -77,15 +93,6 @@ app.post("/authorize", verifyTokenExists, (req, res) => {
     }
   });
 });
-
-// Connect to Database
-try {
-  dal.connectDB();
-} catch (err) {
-  if (err.message === "Error connecting to Database") {
-    res.status(500).send("500 Internal Server Error");
-  }
-}
 
 app.use(
   "/graphql",
