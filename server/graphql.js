@@ -71,7 +71,9 @@ app.post("/login", async (req, res) => {
   console.log("refreshToken", typeof refreshToken, refreshToken);
 
   try {
-    const result = await dal.addRefreshToken(refreshToken);
+    const tokenList = await dal.getAllRefreshTokens();
+    console.log("tokenList", tokenList);
+    const result = await dal.addRefreshToken(refreshToken, tokenList);
     console.log("addRefreshToken result", result);
   } catch (err) {
     console.error("addRefreshToken Error:", err.message);

@@ -41,9 +41,21 @@ const connectDB = async () => {
   });
 };
 
-function addRefreshToken(refreshToken) {
+function getAllRefreshTokens() {
+  return new Promise((resolve, reject) => {
+    RefreshToken.find((err, tokens) => {
+      err ? reject(err) : resolve(tokens);
+    });
+  });
+}
+function addRefreshToken(token, tokenList) {
   console.log("addRefreshToken FUNCTION");
-  let newToken = new RefreshToken(refreshToken);
+  return new Promise((resolve, reject) => {
+    User.findOneAndUpdate(tokenList, { ...tokenList, token }, (err, result) => {
+      console.log("addRefreshToken result:", result);
+      err ? reject(err) : resolve(result);
+    });
+  });
 
   return new Promise((resolve, reject) => {
     newToken
@@ -161,6 +173,7 @@ function deleteUser(id) {
 }
 
 module.exports = {
+  getAllRefreshTokens,
   addRefreshToken,
   connectDB,
   createUser,
