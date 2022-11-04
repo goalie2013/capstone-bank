@@ -81,8 +81,10 @@ app.post("/authorize", verifyTokenExists, (req, res) => {
 // Use Refresh Token to create new Access Token
 app.post("/newtoken", async (req, res) => {
   console.log("/newtoken");
-  const refreshToken = req.body.token;
+  const refreshToken = req.body;
   const tokenObj = await dal.getAllRefreshTokens();
+  console.log("/newtoken tokenObj", tokenObj);
+
   const tokenList = [...tokenObj[0]["tokens"]];
 
   console.log("/newtoken refreshToken", refreshToken);
