@@ -41,7 +41,7 @@ const connectDB = async () => {
   });
 };
 
-export function addRefreshToken(refreshToken) {
+function addRefreshToken(refreshToken) {
   console.log("addRefreshToken FUNCTION");
   let newToken = new RefreshToken(refreshToken);
 
@@ -161,6 +161,7 @@ function deleteUser(id) {
 }
 
 module.exports = {
+  addRefreshToken,
   connectDB,
   createUser,
   getUser,
