@@ -88,18 +88,19 @@ app.post("/newtoken", async (req, res) => {
   const tokenList = tokenObj[0]["tokens"];
 
   console.log("/newtoken refreshToken", refreshToken);
-  console.log("/newtoken tokenList[-1]", tokenList[-1]);
+  console.log("/newtoken tokenList[-1]", tokenList[tokenList.length - 1]);
 
   if (refreshToken == null) return res.sendStatus(401);
   if (!tokenList.includes(refreshToken)) return res.sendStatus(403);
   jwt.verify(refreshToken, process.env.REFRESH_SECRET, (err, user) => {
     if (err) return res.sendStatus(403);
-    console.log("/token user: ", user);
-    //   const accessToken = generateToken(
-    //     { name: user.name },
-    //     process.env.REFRESH_SECRET,
-    //     3
-    //   );
+    console.log("/newtoken user: ", user);
+    const accessToken = generateToken(
+      { id: user.id, name: user.name, email: user.email },
+      process.env.REFRESH_SECRET,
+      60 * 30
+    );
+    res.json({ accessToken });
   });
 });
 
