@@ -110,17 +110,23 @@ app.post("/newtoken", async (req, res) => {
 });
 
 app.get("/screenshot", (req, res) => {
-  const { id, date, type } = req.body;
   (async () => {
     try {
+      const { id, date, type } = req.body;
+
       const browser = await puppeteer.launch({
         executablePath: executablePath(),
       });
       const page = await browser.newPage();
       await page.goto(`https://betterbankingapp.net/deposit/${id}`);
       await page.emulateMediaType("screen");
+      // await page.setViewport({
+      //   width: 1920,
+      //   height: 1280,
+      //   deviceScaleFactor: 1,
+      // });
       const pdf = await page.pdf({
-        path: `${type}${date}.pdf`,
+        path: `${type} ${date}.pdf`,
         format: "Letter",
         margin: {
           top: "20px",
