@@ -1,4 +1,4 @@
-const puppeteer = require("puppeteer");
+const puppeteer = require("puppeteer-core");
 
 function takeScreenshot(date) {
   console.log("takeScreenshot FUNCTION");
