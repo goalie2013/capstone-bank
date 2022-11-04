@@ -98,7 +98,7 @@ app.post("/newtoken", async (req, res) => {
     console.log("/newtoken user: ", user);
     const accessToken = generateToken(
       { id: user.id, name: user.name, email: user.email },
-      process.env.REFRESH_SECRET,
+      process.env.TOKEN_SECRET,
       60 * 30
     );
     res.json({ accessToken });
