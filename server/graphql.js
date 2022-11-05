@@ -1,5 +1,5 @@
 // DEVELOPMENT ONLY
-// require("dotenv").config();
+require("dotenv").config();
 const express = require("express");
 const cors = require("cors");
 const { graphqlHTTP } = require("express-graphql");
@@ -72,7 +72,9 @@ app.post("/authorize", verifyTokenExists, (req, res) => {
   jwt.verify(req.token, process.env.TOKEN_SECRET, (err, user) => {
     if (err) {
       console.error("ERROR /authorize", err.message);
-      res.sendStatus(403);
+      // Invalid/Expired JWT --> Log Uesr Out
+      if (err.messagage === "jwt malformed ") return res.sendStatus(403);
+      res.sendStatus(401);
     } else {
       console.log("/authorize data", user);
       res.json({
@@ -83,6 +85,7 @@ app.post("/authorize", verifyTokenExists, (req, res) => {
   });
 });
 
+// If no Access Token --> Check if Refresh Token Exists -->
 // Use Refresh Token to create new Access Token
 app.post("/newtoken", async (req, res) => {
   console.log("/newtoken");

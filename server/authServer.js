@@ -14,15 +14,6 @@ app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 app.use(express.static("public"));
 
-// Create & Send JWT Token on Login
-// app.post("/login", (req, res) => {
-//   // Authenticated user
-//   const user = req.body.user;
-
-//   const jwtToken = jwt.sign(user, process.env.TOKEN_SECRET);
-//   res.json({ token: jwtToken });
-// });
-
 // app.listen(port || 4001, () => console.log(`Server running on port ${port}`));
 
 // Get JWT, Verify it, and return user
