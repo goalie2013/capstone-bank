@@ -8,8 +8,8 @@ const bodyParser = require("body-parser");
 const jwt = require("jsonwebtoken");
 const { verifyTokenExists, generateToken } = require("./authServer");
 const { takeScreenshot } = require("./puppeteer");
-const puppeteer = require("puppeteer-core");
-const { executablePath } = require("puppeteer-core");
+const puppeteer = require("puppeteer");
+// const { executablePath } = require("puppeteer-core");
 
 // const middleware = require("./middleware/auth");
 const { schema, root } = require("./schema/graphqlSchema");
@@ -113,10 +113,10 @@ app.get("/screenshot", (req, res) => {
   (async () => {
     try {
       const { id, date, type } = req.body;
-
-      const browser = await puppeteer.launch({
-        executablePath: executablePath(),
-      });
+      const browser = await puppeteer.launch();
+      // {
+      //   executablePath: executablePath(),
+      // }
       const page = await browser.newPage();
       await page.goto(`https://betterbankingapp.net/deposit/${id}`);
       await page.emulateMediaType("screen");
