@@ -1,35 +1,38 @@
 const puppeteer = require("puppeteer");
-const fs = require("fs");
+// const fs = require("fs");
 
 const takeScreenshot = async (id, date, type, res) => {
   console.log("takeScreenshot FUNCTION");
   let browser;
 
   // Create folder to save screenshots into
-  if (!fs.existsSync("screenshots")) fs.mkdirSync("screenshots");
+  //   if (!fs.existsSync("screenshots")) fs.mkdirSync("screenshots");
 
   //   (async () => {
   const typeLower = type.toLowerCase();
+  const url = `http://localhost:3000/${typeLower}/${id}`;
+  console.log("url", url);
   try {
     browser = await puppeteer.launch();
     const page = await browser.newPage();
-    await page.goto(`https://betterbankingapp.net/${typeLower}/${id}`);
-    await page.emulateMediaType("screen");
+    await page.goto(`http://localhost:3000/`);
+    // await page.emulateMediaType("screen");
     await page.setViewport({ width: 1440, height: 1080 });
 
-    // { path: `${type}-${date}.png` }
     const image = await page.screenshot({
       type: "jpeg",
-      quality: 100,
-      clip: {
-        x: 0,
-        y: 70,
-        width: 640,
-        height: 360,
-      },
+      quality: 90,
+      fullPage: true,
       omitBackground: true,
+      //   clip: {
+      //     x: 0,
+      //     y: 70,
+      //     width: 640,
+      //     height: 360,
+      //   },
+      //   path: `${type}-${date}.png`,
     });
-    const base64Image = Buffer.from(image).toString("base64");
+    const base64Image = image.toString("base64");
     console.log("image", image);
     console.log("base64Image", base64Image);
     res.writeHead(200, {

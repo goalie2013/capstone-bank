@@ -46,9 +46,8 @@ app.post("/login", async (req, res) => {
   console.log("/login user data", user);
   if (!user) res.sendStatus(400);
 
-  const accessToken = generateToken(user, process.env.TOKEN_SECRET, 60 * 30);
-
-  const refreshToken = generateToken(user, process.env.REFRESH_SECRET, "1h");
+  const accessToken = generateToken(user, process.env.TOKEN_SECRET, 60 * 15);
+  const refreshToken = generateToken(user, process.env.REFRESH_SECRET, "2h");
 
   console.log("accessToken", accessToken);
   console.log("refreshToken", typeof refreshToken, refreshToken);
@@ -87,17 +86,21 @@ app.post("/authorize", verifyTokenExists, (req, res) => {
 
 // If no Access Token --> Check if Refresh Token Exists -->
 // Use Refresh Token to create new Access Token
-app.post("/newtoken", async (req, res) => {
-  console.log("/newtoken");
+app.post("/newaccesstoken", async (req, res) => {
+  console.log("/newaccesstoken");
   const refreshToken = req.body.token;
   const tokenObj = await dal.getAllRefreshTokens();
   // console.log("/newtoken tokenObj", tokenObj);
 
   const tokenList = tokenObj[0]["tokens"];
 
-  console.log("/newtoken refreshToken", refreshToken);
+  console.log("/newaccesstoken refreshToken", refreshToken);
   console.log();
-  console.log("/newtoken tokenList[-1]", tokenList[tokenList.length - 1], "\n");
+  console.log(
+    "/newaccesstoken tokenList[-1]",
+    tokenList[tokenList.length - 1],
+    "\n"
+  );
 
   if (refreshToken == null) return res.sendStatus(401);
   if (!tokenList.includes(refreshToken)) {
@@ -109,7 +112,7 @@ app.post("/newtoken", async (req, res) => {
       console.error(err.message);
       return res.sendStatus(403);
     }
-    console.log("/newtoken user: ", user);
+    console.log("/newaccesstoken user: ", user);
     const accessToken = generateToken(
       { id: user.id, name: user.name, email: user.email },
       process.env.TOKEN_SECRET,
