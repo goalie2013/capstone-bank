@@ -63,32 +63,41 @@ function addRefreshToken(token, tokenList) {
     );
   });
 
-  return new Promise((resolve, reject) => {
-    newToken
-      .save()
-      .then((result) => resolve(result))
-      .catch((err) => reject(err));
-  });
+  // return new Promise((resolve, reject) => {
+  //   newToken
+  //     .save()
+  //     .then((result) => resolve(result))
+  //     .catch((err) => reject(err));
+  // });
 }
 
 /////////////////////////////////////////////////
 // Create a User Account
 /////////////////////////////////////////////////
-function createUser({ name, email, password }) {
+function createUser({ name, email, password = "" }) {
   console.log("createUser()");
   console.log(typeof User);
+  let newUser;
   // Generate Salt
   const salt = bcrypt.genSaltSync(saltRounds);
   // Hash Password
-  const hash = bcrypt.hashSync(password, salt);
-
-  const newUser = new User({
-    name,
-    email,
-    password: hash,
-    balance: 0,
-    transactions: [],
-  });
+  if (password) {
+    const hash = bcrypt.hashSync(password, salt);
+    newUser = new User({
+      name,
+      email,
+      password: hash,
+      balance: 0,
+      transactions: [],
+    });
+  } else {
+    newUser = new User({
+      name,
+      email,
+      balance: 0,
+      transactions: [],
+    });
+  }
   newUser.id = newUser._id;
 
   console.log("newUser", newUser);
