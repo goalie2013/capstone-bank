@@ -8,18 +8,6 @@ const colors = require("colors");
 const bcrypt = require("bcrypt");
 const saltRounds = 10;
 
-// const User = models.User;
-
-// let db = null;
-// Connect to MongoDB
-// MongoClient.connect(url, { useUnifiedTopology: true }, (err, client) => {
-//   console.log("Connected to MongoDB!!");
-
-//   // Connect to my db created in mongo_test.js
-//   const dbName = "tiered-bad-bank";
-//   db = client.db(dbName);
-// });
-
 const connectDB = async () => {
   try {
     console.log("connectDB()");
@@ -41,6 +29,9 @@ const connectDB = async () => {
   });
 };
 
+///////////////////////////////////////////////////////
+// Get & Add Refresh Token
+///////////////////////////////////////////////////////
 function getAllRefreshTokens() {
   return new Promise((resolve, reject) => {
     RefreshToken.find((err, tokens) => {
@@ -71,9 +62,10 @@ function addRefreshToken(token, tokenList) {
   // });
 }
 
-/////////////////////////////////////////////////
+///////////////////////////////////////////////////////
 // Create a User Account
-/////////////////////////////////////////////////
+// Note: Google Sign In users will NOT have a password
+///////////////////////////////////////////////////////
 function createUser({ name, email, password = "" }) {
   console.log("createUser()");
   console.log(typeof User);
@@ -114,9 +106,9 @@ function createUser({ name, email, password = "" }) {
   });
 }
 
-/////////////////////////////////////////////////
+///////////////////////////////////////////////////////
 // Get User By ID
-/////////////////////////////////////////////////
+///////////////////////////////////////////////////////
 function getUser(id) {
   return new Promise((resolve, reject) => {
     User.findById(id, (err, user) => {
@@ -125,9 +117,9 @@ function getUser(id) {
   });
 }
 
-/////////////////////////////////////////////////
+///////////////////////////////////////////////////////
 // Get User By Email
-/////////////////////////////////////////////////
+///////////////////////////////////////////////////////
 function getUserByEmail(email) {
   return new Promise((resolve, reject) => {
     User.findOne({ email: email }, (err, user) => {
@@ -135,9 +127,9 @@ function getUserByEmail(email) {
     });
   });
 }
-/////////////////////////////////////////////////
+///////////////////////////////////////////////////////
 // Get All Users
-/////////////////////////////////////////////////
+///////////////////////////////////////////////////////
 function getAllUsers() {
   return new Promise((resolve, reject) => {
     User.find((err, users) => {
@@ -146,14 +138,14 @@ function getAllUsers() {
   });
 }
 
-/////////////////////////////////////////////////
+///////////////////////////////////////////////////////
 // Login User
-/////////////////////////////////////////////////
+///////////////////////////////////////////////////////
 // DONT NEED BC FIREBASE AUTH HANDLES LOGIN
 
-/////////////////////////////////////////////////
+///////////////////////////////////////////////////////
 // Update User
-/////////////////////////////////////////////////
+///////////////////////////////////////////////////////
 function updateUser(id, balance, transactions) {
   //TODO: Generate ID for each new Transaction
   return new Promise((resolve, reject) => {
@@ -164,21 +156,9 @@ function updateUser(id, balance, transactions) {
   });
 }
 
-/////////////////////////////////////////////////
-// Update User Balance
-/////////////////////////////////////////////////
-// export function updateBalance(balance) {
-//     return new Promise((resolve, reject) => {
-//       User.updateOne({ balance: balance }, (err, result) => {
-//         console.log("updateBalance result:", result);
-//         err ? reject(err) : resolve(result);
-//       });
-//     });
-//   }
-
-/////////////////////////////////////////////////
+///////////////////////////////////////////////////////
 // Delete User
-/////////////////////////////////////////////////
+///////////////////////////////////////////////////////
 function deleteUser(id) {
   return new Promise((resolve, reject) => {
     User.findByIdAndRemove(id, (err, userDoc) => {
@@ -195,7 +175,6 @@ module.exports = {
   getUser,
   getUserByEmail,
   getAllUsers,
-  // loginUser,
   updateUser,
   deleteUser,
 };

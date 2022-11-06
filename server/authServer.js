@@ -2,9 +2,6 @@ const express = require("express");
 // const cors = require("cors");
 const bodyParser = require("body-parser");
 const jwt = require("jsonwebtoken");
-// const middleware = require("./middleware/auth");
-// const port = process.env.SERVER_PORT;
-// console.log("port", port);
 
 const app = express();
 // CORS FOR DEVELOPMENT ONLY
@@ -14,9 +11,9 @@ app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 app.use(express.static("public"));
 
-// app.listen(port || 4001, () => console.log(`Server running on port ${port}`));
-
-// Get JWT, Verify it, and return user
+/////////////////////////////////////////////////
+// Middleware: Get JWT, Verify it, and return user
+/////////////////////////////////////////////////
 function verifyTokenExists(req, res, next) {
   // get token from "Bearer TOKEN" header
   const authHeader = req.headers["authorization"];
@@ -34,6 +31,9 @@ function verifyTokenExists(req, res, next) {
   next();
 }
 
+////////////////////////////////////////////////////////
+// Helper Function: Generate New Access/Refresh Token
+////////////////////////////////////////////////////////
 function generateToken(user, secret, expiresInValue) {
   return jwt.sign(user, secret, { expiresIn: expiresInValue });
 
@@ -42,5 +42,7 @@ function generateToken(user, secret, expiresInValue) {
   //   console.log("new access token", token);
   // }
 }
+
+// app.listen(process.env.SERVER_PORT || 4001, () => console.log(`Server running on port ${process.env.SERVER_PORT}`));
 
 module.exports = { verifyTokenExists, generateToken };

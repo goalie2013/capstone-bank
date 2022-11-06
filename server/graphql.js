@@ -1,5 +1,9 @@
 // DEVELOPMENT ONLY
-require("dotenv").config();
+// require("dotenv").config();
+// const { takeScreenshot } = require("./puppeteer");
+// const puppeteer = require("puppeteer");
+// const { executablePath } = require("puppeteer-core");
+// const middleware = require("./middleware/auth");
 const express = require("express");
 const cors = require("cors");
 const { graphqlHTTP } = require("express-graphql");
@@ -7,11 +11,6 @@ const dal = require("./dalNew");
 const bodyParser = require("body-parser");
 const jwt = require("jsonwebtoken");
 const { verifyTokenExists, generateToken } = require("./authServer");
-const { takeScreenshot } = require("./puppeteer");
-const puppeteer = require("puppeteer");
-// const { executablePath } = require("puppeteer-core");
-
-// const middleware = require("./middleware/auth");
 const { schema, root } = require("./schema/graphqlSchema");
 const port = process.env.PORT;
 console.log("port", port);
@@ -38,10 +37,11 @@ try {
   }
 }
 
+////////////////////////////////////////////////////////////////
 // Create & Send JWT Token on Login
+////////////////////////////////////////////////////////////////
 app.post("/login", async (req, res) => {
   // Authenticated user
-  // const user = req.body.user;
   const user = req.body;
   console.log("/login user data", user);
   if (!user) res.sendStatus(400);
@@ -52,6 +52,7 @@ app.post("/login", async (req, res) => {
   console.log("accessToken", accessToken);
   console.log("refreshToken", typeof refreshToken, refreshToken);
 
+  // Add Refresh Token to Token List in DB
   try {
     const tokenList = await dal.getAllRefreshTokens();
     const result = await dal.addRefreshToken(refreshToken, tokenList);
@@ -63,7 +64,9 @@ app.post("/login", async (req, res) => {
   res.json({ accessToken: accessToken, refreshToken: refreshToken });
 });
 
+////////////////////////////////////////////////////////////////
 // Authorize user by checking valid JWT Access Token
+////////////////////////////////////////////////////////////////
 app.post("/authorize", verifyTokenExists, (req, res) => {
   console.log("/authorize req.token", req.token);
   if (req.token == null) res.sendStatus(401);
@@ -72,7 +75,7 @@ app.post("/authorize", verifyTokenExists, (req, res) => {
     if (err) {
       console.error("ERROR /authorize", err.message);
       // Invalid/Expired JWT --> Log Uesr Out
-      if (err.messagage === "jwt malformed ") return res.sendStatus(403);
+      if (err.message === "jwt malformed ") return res.sendStatus(403);
       res.sendStatus(401);
     } else {
       console.log("/authorize data", user);
@@ -84,8 +87,10 @@ app.post("/authorize", verifyTokenExists, (req, res) => {
   });
 });
 
+////////////////////////////////////////////////////////////////
 // If no Access Token --> Check if Refresh Token Exists -->
 // Use Refresh Token to create new Access Token
+////////////////////////////////////////////////////////////////
 app.post("/newaccesstoken", async (req, res) => {
   console.log("/newaccesstoken");
   const refreshToken = req.body.token;
@@ -104,7 +109,7 @@ app.post("/newaccesstoken", async (req, res) => {
 
   if (refreshToken == null) return res.sendStatus(401);
   if (!tokenList.includes(refreshToken)) {
-    console.log("Refresh Token NOT in Token List");
+    console.log("Refresh Token NOT in Token List. Return 403 Forbidden");
     return res.sendStatus(403);
   }
   jwt.verify(refreshToken, process.env.REFRESH_SECRET, (err, user) => {
@@ -112,6 +117,7 @@ app.post("/newaccesstoken", async (req, res) => {
       console.error(err.message);
       return res.sendStatus(403);
     }
+
     console.log("/newaccesstoken user: ", user);
     const accessToken = generateToken(
       { id: user.id, name: user.name, email: user.email },
@@ -122,12 +128,9 @@ app.post("/newaccesstoken", async (req, res) => {
   });
 });
 
-app.get("/screenshot", (req, res) => {
-  const { id, date, type } = req.query;
-  console.log("req.query", req.query);
-  takeScreenshot(id, date, type, res);
-});
-
+////////////////////////////////////////////////////////////////
+// GraphQL
+////////////////////////////////////////////////////////////////
 app.use(
   "/graphql",
   // authenticateToken,
@@ -141,3 +144,9 @@ app.use(
 app.listen(process.env.PORT || 5000, "0.0.0.0", () =>
   console.log(`My Server running on port ${process.env.PORT}`)
 );
+
+// app.get("/screenshot", (req, res) => {
+//   const { id, date, type } = req.query;
+//   console.log("req.query", req.query);
+//   takeScreenshot(id, date, type, res);
+// });
