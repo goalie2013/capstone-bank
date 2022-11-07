@@ -12,7 +12,7 @@ export default function PageNotFound({ id }) {
   };
   return (
     <>
-      <NavBar id={id} />
+      {/* <NavBar id={id} /> */}
 
       <div style={styles}>
         <img

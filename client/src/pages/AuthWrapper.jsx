@@ -1,7 +1,5 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import AccessCard from "../components/AccessCard";
-import { handleNavigate } from "../helper/handleHelper";
 import { app } from "../firebase";
 import { getAuth } from "firebase/auth";
 import Deposit from "./Deposit";
@@ -12,6 +10,8 @@ import { useQuery } from "@apollo/client";
 import { GET_USER_BY_EMAIL } from "../queries/userQueries";
 import NotAuthorized from "../components/NotAuthorized";
 import UserData from "./UserData";
+import DatabaseDown from "../components/DatabaseDown";
+import PageNotFound from "../components/PageNotFound";
 
 export default function AuthWrapper({ pageComponent }) {
   console.log("----- AUTHWRAPPER ------");
@@ -23,10 +23,11 @@ export default function AuthWrapper({ pageComponent }) {
   const [email, setEmail] = useState("");
   let navigate = useNavigate();
   const firebaseAuth = getAuth(app);
-
-  const { id } = useParams();
+  const { id: paramId } = useParams();
 
   console.log("EMAIL", email);
+
+  // GET USER BY EMAIL GRAPHQL QUERY
   const { loading, error, data } = useQuery(GET_USER_BY_EMAIL, {
     variables: { email },
     // pollInterval: 1000,
@@ -63,9 +64,11 @@ export default function AuthWrapper({ pageComponent }) {
         console.log("auth after NO USER CRED", auth);
         window.localStorage.setItem("auth", "false");
         window.localStorage.setItem("token", "");
-        setShowModal(true);
         console.log("FDSFSDFKFSDK", auth);
         // return <NotAuthorized id={id} />;
+        // setCredCounter((prevVal) => prevVal + 1);
+
+        // if (credCounter > 8) setShowModal(true);
         setShowModal(true);
       }
     });
@@ -74,7 +77,7 @@ export default function AuthWrapper({ pageComponent }) {
   console.log("pageComponent", pageComponent);
 
   if (data) {
-    if (data.getUserByEmail && data.getUserByEmail.id !== id) {
+    if (data.getUserByEmail && data.getUserByEmail.id !== paramId) {
       console.log("data.getUserByEmail.id", data.getUserByEmail.id);
       return <NotAuthorized id={data.getUserByEmail.id} />;
     }
@@ -107,6 +110,20 @@ export default function AuthWrapper({ pageComponent }) {
           );
       }
     }
+  } else {
+    //   return <DatabaseDown />;
+    const startTime = new Date();
+
+    const endTime = new Date();
+    let timeDiff = endTime - startTime; //in ms
+    // strip the ms
+    timeDiff /= 1000;
+
+    // get seconds
+    const seconds = Math.round(timeDiff);
+    console.log(seconds + " seconds");
+
+    if (seconds > 8 && !data) return <PageNotFound />;
   }
   return (
     <>
@@ -129,24 +146,24 @@ export default function AuthWrapper({ pageComponent }) {
 
             <div className="overlay"></div>
           </div> */}
-          <NotAuthorized id={id} />
+          <NotAuthorized id={paramId} />
         </>
       ) : (
         // token && <X token={token} />
         //TODO:
         // <NotAuthorized />
         <>
-          <NavBar id={id} />
+          <NavBar id={paramId} />
           <div
-            class="d-flex justify-content-center align-items-center"
+            className="d-flex justify-content-center align-items-center"
             style={{ minHeight: "100vh" }}
           >
             <div
-              class="spinner-border text-primary"
+              className="spinner-border text-primary"
               style={{ width: "3rem", height: "3rem" }}
               role="status"
             >
-              <span class="sr-only"></span>
+              <span className="sr-only"></span>
             </div>
           </div>
         </>

@@ -25,7 +25,17 @@ body {
 .link:hover {
   text-decoration: underline;
 }
-
+@media all and (max-width: 767px) {
+  .loginOutBtn {
+    background: #fcf6f5ff;
+    color: #89abe3ff;
+    font-weight: 800;
+    box-shadow: "0 0.2rem 0.75rem rgba(0, 0, 0, 0.3)";
+    margin-top: 1rem;
+    margin-left: 0rem !important;
+    width: 25%;
+  }
+}
 @media all and (max-width: 655px) {
   .page-wrapper {
     /* width: 100%; */
@@ -40,14 +50,21 @@ body {
     z-index: 2;
   }
 
-  .loginOutBtn {
-    background: #fcf6f5ff;
-    color: #89abe3ff;
-    font-weight: 800;
-    box-shadow: "0 0.2rem 0.75rem rgba(0, 0, 0, 0.3)";
-    margin-top: 1rem;
-    margin-left: 0rem !important;
-    width: 25%;
+  .home-title {
+    font-size: 3.5rem;
+    font-weight: 900;
+  }
+
+  .homeImgsWrapper {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    /* justify-content: space-around; */
+    /* width: 100%; */
+    margin-top: "5rem";
+  }
+  .homeImg {
+    margin-top: "2rem";
   }
 }
 
@@ -72,6 +89,28 @@ body {
     box-shadow: "0 0.2rem 0.75rem rgba(0, 0, 0, 0.3)";
     margin-left: "1rem";
   }
+
+  .home-title {
+    font-size: 4rem;
+    font-weight: 900;
+  }
+
+  .homeImgsWrapper {
+    display: flex;
+    flex-direction: row;
+    align-items: flex-start;
+    justify-content: space-around;
+    width: 100%;
+    margin-top: "5rem";
+  }
+}
+
+.home-title-wrapper {
+  display: flex;
+  flex-direction: row;
+  align-items: flex-end;
+  padding: 0.75rem;
+  font-family: "Lobster";
 }
 
 /* Create Account */
@@ -207,4 +246,15 @@ body {
   width: 100%;
   /* margin-top: 5rem; */
   z-index: 1;
+}
+
+#dropdown-autoclose-true::after {
+  display: none;
+}
+
+#navLogOutBtn:active {
+  background: none;
+}
+#navDeleteBtn:active {
+  background: none;
 }

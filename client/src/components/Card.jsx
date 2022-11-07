@@ -34,7 +34,7 @@ export default function CustomCard(props) {
       className="{classes()} kk imageborder"
       style={{
         // backgroundColor: props.bgColor,
-        background: "rgb(230,241,255,1)",
+        background: props.bgColor,
         width: "25rem",
         marginTop: "2.5rem",
         boxShadow: "0 3rem 5rem rgba(0, 0, 0, 0.2)",
@@ -52,7 +52,7 @@ export default function CustomCard(props) {
         style={{
           textAlign: "center",
           color: COLORS.lighterTheme,
-          background: COLORS.darkerTheme,
+          background: props.bgHeaderColor,
           borderTopLeftRadius: "20px",
           borderTopRightRadius: "20px",
           fontSize: "1.75rem",
@@ -77,7 +77,7 @@ export default function CustomCard(props) {
         {props.body}
         {props.statusText && (
           <div
-            class={classesAlert(props.statusColor)}
+            className={classesAlert(props.statusColor)}
             role="alert"
             style={{
               color: props.statusColor,

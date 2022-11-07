@@ -10,6 +10,7 @@ import {
   from,
 } from "@apollo/client";
 import { onError } from "@apollo/client/link/error";
+import { setContext } from "@apollo/client/link/context";
 import DatabaseDown from "./components/DatabaseDown";
 
 export const UserContext = React.createContext(null);
@@ -31,7 +32,7 @@ export const UserContext = React.createContext(null);
 // });
 
 const httpLink = new HttpLink({
-  uri: "https://betterbank.herokuapp.com:5050/graphql",
+  uri: "https://betterbank.herokuapp.com/graphql",
 });
 
 const errorLink = onError(({ graphQLErrors, networkError }) => {
@@ -49,17 +50,31 @@ const errorLink = onError(({ graphQLErrors, networkError }) => {
   }
 });
 
+const authLink = setContext((_, { headers }) => {
+  // get the authentication token from local storage if it exists
+  const token = localStorage.getItem("token");
+  // return the headers to the context so httpLink can read them
+  console.log("index authLink");
+  return {
+    headers: {
+      ...headers,
+      authorization: token ? `Bearer ${token}` : "",
+    },
+  };
+});
+
+console.log("creating Apollo Client...");
 const client = new ApolloClient({
-  // uri: `http://localhost:5050/graphql`,
+  // uri: `http://betterbank.herokuapp.com/graphql`,
   link: from([errorLink, httpLink]),
   cache: new InMemoryCache({ addTypename: false }),
   // cache,
 });
 
 ReactDOM.createRoot(document.getElementById("root")).render(
-  <React.StrictMode>
-    <ApolloProvider client={client}>
-      <App />
-    </ApolloProvider>
-  </React.StrictMode>
+  // <React.StrictMode>
+  <ApolloProvider client={client}>
+    <App />
+  </ApolloProvider>
+  // </React.StrictMode>
 );

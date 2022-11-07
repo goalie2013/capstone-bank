@@ -1,19 +1,20 @@
 import React, { useState, useContext } from "react";
-import NavBar from "../components/NavBar";
 import SubmitBtn from "../components/SubmitBtn";
 import Card from "react-bootstrap/Card";
 import Form from "react-bootstrap/Form";
 import CustomCard from "../components/Card";
 import { UserContext } from "../index";
-// import validator from "validator";
 import { validate } from "../helper/userFormsHelper";
+import { axiosLogin } from "../helper/axiosHelper";
 import { COLORS } from "../themes";
 import { useMutation } from "@apollo/client";
 import { CREATE_USER } from "../mutations/userMutations";
 import { Link, useNavigate } from "react-router-dom";
 import { app } from "../firebase";
 import { getAuth, createUserWithEmailAndPassword } from "firebase/auth";
-import GoogleAuthCreateUser from "../components/GoogleAuth";
+import GoogleAuth from "../components/GoogleAuth";
+import Loading from "../components/Loading";
+import { createFirebaseUser } from "../helper/authHelper";
 
 export default function CreateAccount() {
   const [show, setShow] = useState(true);
@@ -29,15 +30,25 @@ export default function CreateAccount() {
   const navigate = useNavigate();
   const firebaseAuth = getAuth(app);
   let id;
-  ctx.user.id ? (id = ctx.user.id) : (id = "bad-request");
 
+  // If ctx.user.id exists --> go back page
+  if (ctx.user && ctx.user.id) navigate(-1);
+
+  // createUser GraphQL Mutation
   const [createUser, { data, loading, error }] = useMutation(CREATE_USER);
-  if (error) console.error("Apollo Error", error);
-  if (loading) console.log("LOADING");
+  if (error) {
+    console.error("Apollo Error", error);
+    alert(error.message);
+  }
+  if (loading) return <Loading />;
   if (data && data.createUser) {
     console.log("DATA PRESENT!!", data);
-    ctx.user.id = data.createUser.id;
-    navigate(`/deposit/${data.createUser.id}`);
+    const newUser = data.createUser;
+    console.log("newUser", newUser);
+
+    // Get & Store JWT Token
+    console.log("axios /login call");
+    axiosLogin(newUser, ctx.user, navigate);
   } else {
     console.log("NO DATA");
   }
@@ -50,56 +61,37 @@ export default function CreateAccount() {
     setPassTxtColor,
   };
 
-  const nameStyles = {
-    color: nameTxtColor,
-  };
-  const emailStyles = {
-    color: emailTxtColor,
-  };
-  const passStyles = {
-    color: passTxtColor,
-  };
+  const nameStyles = { color: nameTxtColor };
+  const emailStyles = { color: emailTxtColor };
+  const passStyles = { color: passTxtColor };
 
   function handleCreate() {
+    // Validate --> Firebase Auth create User --> createUser Mutation for DB
     console.log("handleCreate", name, email, password);
-    // e.preventDefault();
     if (!validate(name, "name", stateObj, setStateObj)) return;
     if (!validate(email, "email", stateObj, setStateObj)) return;
     if (!validate(password, "password", stateObj, setStateObj)) return;
 
     console.log("Passed validation!!");
 
-    // Create User with Firebase Auth
-    createUserWithEmailAndPassword(firebaseAuth, email, password)
-      .then((userCredential) => {
-        // User is now Signed In
-        const user = userCredential.user;
-        console.log("Firebase User", user);
-        // Reset context if user already created
-        ctx.user = {};
-        ctx.user = {
-          name: name,
-          email: user.email,
-        };
-      })
-      .catch((error) => {
-        console.error("Firebase Create User Error", error.message);
-        setStatus(`Error: ${error.message}`);
-      });
+    // Create User Firebase Auth
+    createFirebaseUser(firebaseAuth, email, password, setStatus);
 
     // Create User into Database
     try {
+      console.log("call createUser()");
       createUser({ variables: { user: { name, email, password } } });
     } catch (err) {
       console.error("createUser Error", err.message);
     }
 
+    // Show Create Account Success Component
     setShow(false);
   }
 
   return (
     <>
-      <NavBar id={id} />
+      {/* <NavBar id={id} /> */}
       <div className="page-wrapper">
         <h1 style={{ fontWeight: 900, marginBottom: "0.5rem" }}>
           Create Account
@@ -112,7 +104,7 @@ export default function CreateAccount() {
         </h5>
 
         <CustomCard
-          // bgHeaderColor={COLORS.cardHeader}
+          bgHeaderColor={COLORS.darkerTheme}
           // header="Create Account"
           bgColor={COLORS.cardBackground}
           statusText={status}
@@ -178,7 +170,11 @@ export default function CreateAccount() {
                       handleClick={handleCreate}
                     />
                   </Form>
-                  <GoogleAuthCreateUser />
+                  <GoogleAuth
+                    setShow={setShow}
+                    setStatus={setStatus}
+                    mode="Signup"
+                  />
                 </Card.Body>
               </>
             ) : (
@@ -202,60 +198,4 @@ export default function CreateAccount() {
 //   setEmail("");
 //   setPassword("");
 //   setShow(true);
-// }
-
-// function validate(field, label) {
-//   console.log("---- validate ----");
-
-//   if (!field) {
-//     // setStatusTextColor("red");
-//     setStatus(
-//       `Error: ${
-//         label[0].toUpperCase() + label.substring(1)
-//       } must be filled out`
-//     );
-//     return false;
-//   }
-
-//   // Name Validation (No special characters or numbers)
-//   if (field === name && !validator.matches(field, /[a-zA-Z ]+$/)) {
-//     // setStatusTextColor("red");
-//     setNameTxtColor("red");
-//     setStatus("Name must only contain letters");
-//     return false;
-//   } else {
-//     // setStatusTextColor("");
-//     setNameTxtColor("black");
-//   }
-
-//   // Email Validation
-//   if (field === email && !validator.isEmail(field)) {
-//     console.log("EMAIL VALIDATION");
-//     // setStatusTextColor("red");
-//     setEmailTxtColor("red");
-//     setStatus("Email not valid. Try Again");
-//     return false;
-//   } else {
-//     // setStatusTextColor("");
-//     setEmailTxtColor("black");
-//   }
-
-//   // Password Length Validation
-//   if (field === password && field.length < 8) {
-//     console.log("XDDDDXDXXDXDXD");
-//     // setStatusTextColor("red");
-//     setPassTxtColor("red");
-//     setStatus("Password must be at least 8 characters");
-//     // document.documentElement.style.setProperty("--password-txt-color", "red");
-//     return false;
-//   } else {
-//     // setStatusTextColor("");
-//     setPassTxtColor("gray");
-//   }
-
-//   // If Validation Passed:
-//   // in case already present from previous validation fail:
-//   setStatus("");
-//   // document.documentElement.style.setProperty("--password-txt-color", "gray");
-//   return true;
 // }

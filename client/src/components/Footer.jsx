@@ -9,9 +9,13 @@ export default function Footer() {
         <Container>
           <Navbar.Brand
             href="#home"
-            style={{ fontSize: "0.85em", color: "#fcf6f5ff" }}
+            style={{
+              fontSize: "0.85em",
+              color: "#fcf6f5ff",
+              textAlign: "center",
+            }}
           >
-            © 2022 Bad Bank Inc.
+            © 2022 Better Bank Inc.
             <hr />
             Created by Gabriel Grinstein
           </Navbar.Brand>

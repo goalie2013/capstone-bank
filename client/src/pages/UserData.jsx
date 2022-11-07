@@ -1,5 +1,4 @@
 import React, { useContext } from "react";
-import NavBar from "../components/NavBar";
 import Transaction from "../components/Transaction";
 import CustomCard from "../components/Card";
 import { COLORS } from "../themes";
@@ -8,40 +7,42 @@ import { QueryGetUser } from "../helper/queryMutationHelper";
 import { UserContext } from "../index";
 import PageNotFound from "../components/PageNotFound";
 import { MdOutlineAttachMoney } from "react-icons/md";
+import NotAuthorized from "../components/NotAuthorized";
+import Loading from "../components/Loading";
 
-export default function UserData({ token, userId, userEmail }) {
-  let { id } = useParams();
+export default function UserData({ userId, userEmail }) {
+  console.count(" --- UserData ---");
+  let { id: paramId } = useParams();
   let userName, balance, transactions, transactionsEl;
   const ctx = useContext(UserContext);
   console.log("ctx", ctx);
   if (!ctx.user.id) ctx.user.id = userId;
 
   try {
-    const { loading, queriedId, name, currentBalance, xTransactions } =
-      QueryGetUser(id);
-    console.log("loading", loading);
-    if (loading)
-      //TODO: Change to Spinner
-      return (
-        <>
-          <NavBar id={userId} />
-          <h1>LOADING!!!</h1>
-        </>
-      );
-
-    id = queriedId;
+    const { loading, name, currentBalance, xTransactions } =
+      QueryGetUser(userId);
+    if (loading) return <Loading />;
     userName = name;
     balance = currentBalance;
     transactions = xTransactions;
-    console.log("name", userName, balance, transactions);
   } catch (err) {
-    // if (err.message == "Loading") return <h1>Loading...</h1>;
+    console.error("ERRORROROROROR", err.message);
+
+    if (err.message == "Data is null") {
+      console.error("DATA IS NULL");
+      // setShowPage(false);
+      return <PageNotFound id={paramId} />;
+    } else if (err.message == "Error getting User Data") {
+      return (
+        <h1 style={{ color: "red" }}>ERROR GETTING USER DATA: {err.message}</h1>
+      );
+    }
   }
 
   // Check if userId matches url parameter; if NOT --> Not Authorized
   console.log("USER ID", userId);
-  console.log("PARAM ID", id);
-  if (userId !== id) return <PageNotFound id={userId} />;
+  console.log("PARAM ID", paramId);
+  if (userId !== paramId) return <NotAuthorized id={userId} />;
 
   console.log("transactions", transactions);
 
@@ -58,10 +59,18 @@ export default function UserData({ token, userId, userEmail }) {
     }
   }
 
+  const nameLower = userName.toLowerCase();
+  // const nameCapitalized = nameLower[0].toUpperCase() + nameLower.slice(1);
+
+  const words = userName.split(" ");
+  const nameCapitalized = words
+    .map((word) => word[0].toUpperCase() + word.substring(1))
+    .join(" ");
+
   return (
     <>
-      <NavBar id={userId} />
-      {userName && (
+      {/* <NavBar id={userId} /> */}
+      {nameCapitalized ? (
         <div className="page-wrapper">
           <h1
             style={{
@@ -73,7 +82,7 @@ export default function UserData({ token, userId, userEmail }) {
               fontWeight: 900,
             }}
           >
-            {userName} Transaction History
+            {nameCapitalized} Transaction History
           </h1>
           <h3 style={{ marginTop: "2rem" }}>
             <b>
@@ -85,10 +94,23 @@ export default function UserData({ token, userId, userEmail }) {
           </h3>
           {/* <h3>Transaction History</h3> */}
           <CustomCard
-            bgHeaderColor="#000"
-            // header={`${userName} Transaction History`}
+            bgHeaderColor={COLORS.darkerTheme}
+            bgColor={COLORS.cardBodyBg}
             body={<h4>{transactionsEl}</h4>}
-          ></CustomCard>
+          />
+        </div>
+      ) : (
+        <div
+          className="d-flex justify-content-center align-items-center"
+          style={{ minHeight: "100vh" }}
+        >
+          <div
+            className="spinner-border text-primary"
+            style={{ width: "3rem", height: "3rem" }}
+            role="status"
+          >
+            <span className="sr-only"></span>
+          </div>
         </div>
       )}
     </>

@@ -9,6 +9,9 @@ import AuthWrapper from "./pages/AuthWrapper";
 import PageNotFound from "./components/PageNotFound";
 import { UserContext } from "./index";
 import Login from "./pages/Login";
+import LoginStep from "./components/LoginStep";
+import AuthWrapperNew from "./pages/AuthWrapperNew";
+import NavBar from "./components/NavBar";
 
 // console.log(
 //   "process.env.REACT_APP_SERVER_PORT",
@@ -24,25 +27,30 @@ function App() {
         }}
       >
         <BrowserRouter>
-          {/* <NavBar /> */}
+          <NavBar />
           <main>
             <Routes>
               <Route path="/" element={<Home />} />
               <Route path="/createaccount" element={<CreateAccount />} />
               <Route path="/login" element={<Login />} />
+              <Route path="/login-success/:email" element={<LoginStep />} />
               <Route
                 path="/deposit/:id"
                 // element={<PageWrapper pageComponent={<Deposit />} />}
-                element={<AuthWrapper pageComponent="Deposit" />}
+                element={<AuthWrapperNew pageComponent="Deposit" />}
               />
               <Route
                 path="/withdraw/:id"
                 // element={<PageWrapper pageComponent={<Withdraw />} />}
-                element={<AuthWrapper pageComponent="Withdraw" />}
+                element={<AuthWrapperNew pageComponent="Withdraw" />}
               />
               <Route
                 path="/data/:id"
-                element={<AuthWrapper pageComponent="UserData" />}
+                element={<AuthWrapperNew pageComponent="UserData" />}
+              />
+              <Route
+                path="/deleteAccount/:id"
+                element={<AuthWrapperNew pageComponent="DeleteAccount" />}
               />
               {/*<Route path="/alldata" element={<AllData />} /> */}
               <Route path="/not-authorized" element={<NotAuthorized />} />

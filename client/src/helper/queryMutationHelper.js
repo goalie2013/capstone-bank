@@ -16,8 +16,6 @@ export function QueryGetUser(id) {
 
   if (loading) {
     console.log("--LOADING--");
-    // return <h1>LOADING...</h1>;
-    // throw new Error("Loading");
     return { loading };
   }
   if (error) {
@@ -45,7 +43,26 @@ export function QueryGetUserByEmail(email) {
     // pollInterval: 1000,
   });
 
-  if (data) return data;
+  if (loading) {
+    console.log("--LOADING--");
+    // return <h1>LOADING...</h1>;
+    // throw new Error("Loading");
+    return { loading };
+  }
+
+  if (error) {
+    console.error("query Error:", error.message);
+    throw new Error("Error getting User Data");
+  }
+
+  // console.log("user data", data);
+  // if (!data || data.getUserByEmail == null) {
+  //   throw new Error("Data is null");
+  // }
+
+  console.log("user data", data);
+  const user = data.getUserByEmail;
+  return { user };
 }
 
 export function QueryAllUsers() {
@@ -74,13 +91,15 @@ export function MutationUpdateUser(id, email) {
   const [updateUser] = useMutation(UPDATE_USER, {
     refetchQueries: [
       {
-        // query: GET_USER,
-        // variables: { id },
-        query: GET_USER_BY_EMAIL,
-        variables: { email },
+        query: GET_USER,
       },
+      "getUser",
+      // variables: { id },
+      // query: GET_USER_BY_EMAIL,
+      // variables: { email },
+      // },
     ],
-    // update(cache, { data }) {
+    // update(cache, { data: {updateUser} }) {
     //   const { getUserByEmail } = cache.readQuery({
     //     query: GET_USER_BY_EMAIL,
     //   });
@@ -88,7 +107,7 @@ export function MutationUpdateUser(id, email) {
     //     query: GET_USER_BY_EMAIL,
     //     data: {
     //       getUserByEmail: {
-    //         ...getUserByEmail,
+    //         ...data,
     //         email,
     //       },
     //     },

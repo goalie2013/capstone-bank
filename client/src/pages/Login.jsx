@@ -1,21 +1,19 @@
 import React, { useState, useContext } from "react";
-import NavBar from "../components/NavBar";
 import SubmitBtn from "../components/SubmitBtn";
 import Card from "react-bootstrap/Card";
 import Form from "react-bootstrap/Form";
 import CustomCard from "../components/Card";
-import { UserContext } from "../index";
 import { COLORS } from "../themes";
 import { validate } from "../helper/userFormsHelper";
 import { Link, useNavigate } from "react-router-dom";
 import { app } from "../firebase";
 import { getAuth, signInWithEmailAndPassword } from "firebase/auth";
-import GoogleSignIn from "../components/GoogleSignIn";
-import { LOG_IN_USER } from "../mutations/userMutations";
-import { useMutation } from "@apollo/client";
+import GoogleAuth from "../components/GoogleAuth";
+import LoginStep from "../components/LoginStep";
 
 export default function Login() {
   const [show, setShow] = useState(true);
+  const [loginStep, setLoginStep] = useState(true);
   const [status, setStatus] = useState("");
   // const [statusTextColor, setStatusTextColor] = useState("");
   const [nameTxtColor, setNameTxtColor] = useState("black");
@@ -24,10 +22,8 @@ export default function Login() {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const ctx = useContext(UserContext);
   const navigate = useNavigate();
   let id;
-  ctx.user.id ? (id = ctx.user.id) : (id = "bad-request");
 
   let stateObj = { name, email, password };
   let setStateObj = {
@@ -47,12 +43,6 @@ export default function Login() {
     color: passTxtColor,
   };
 
-  // Firebase can check real password automatically so DONT need this
-  //   const [loginUser, { data, loading, error }] = useMutation(LOG_IN_USER);
-  //   if (loading) console.warn("LOADING");
-  //   if (error) console.error("Error LOG_IN_USER", error.message);
-  //   if (data) console.log("LOG_IN_USER data", data);
-
   function handleLogin() {
     console.log("handleLogin", name, email, password);
     // e.preventDefault();
@@ -69,7 +59,8 @@ export default function Login() {
         const user = userCredential.user;
         console.log("Logged In User", user);
 
-        setShow(false);
+        // setShow(false);
+        setLoginStep(false);
       })
       .catch((err) => {
         console.error("Error loggin in user", err.message);
@@ -77,9 +68,9 @@ export default function Login() {
       });
   }
 
-  return (
+  return loginStep ? (
     <>
-      <NavBar id={id} />
+      {/* <NavBar id={id} /> */}
       <div className="page-wrapper">
         <h1 style={{ fontWeight: 900, marginBottom: "0.5rem" }}>Log In</h1>
         <h5 style={{ marginTop: "1rem" }}>
@@ -153,7 +144,11 @@ export default function Login() {
 
                     <SubmitBtn name="Log In" handleClick={handleLogin} />
                   </Form>
-                  <GoogleSignIn />
+                  <GoogleAuth
+                    setShow={setShow}
+                    setStatus={setStatus}
+                    mode="Login"
+                  />
                 </Card.Body>
               </>
             ) : (
@@ -169,5 +164,7 @@ export default function Login() {
         />
       </div>
     </>
+  ) : (
+    <LoginStep email={email} />
   );
 }

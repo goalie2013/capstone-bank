@@ -22,7 +22,7 @@ export default function SubmitBtn(props) {
       variant="primary"
       className="submit-btn py-3"
       style={{
-        backgroundColor: COLORS.darkerTheme,
+        backgroundColor: props.bgColor,
         borderColor: COLORS.darkerTheme,
         color: COLORS.lighterTheme,
         boxShadow: "0 0.5rem 1.25rem rgba(0, 0, 0, 0.3)",

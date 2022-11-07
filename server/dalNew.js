@@ -83,12 +83,7 @@ function createUser({ name, email, password = "" }) {
       transactions: [],
     });
   } else {
-    newUser = new User({
-      name,
-      email,
-      balance: 0,
-      transactions: [],
-    });
+    newUser = new User({ name, email, balance: 0, transactions: [] });
   }
   newUser.id = newUser._id;
 

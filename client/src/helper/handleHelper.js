@@ -66,7 +66,20 @@ export function handleNavigate(btnEvent, navigate) {
   // console.log(btnEvent.target.value);
 }
 
-export default { handleChange, handleNavigate };
+export function downloadScreenshot(type, timestamp, uri) {
+  const downloadLink = document.createElement("a");
+  const fileName = `${type}-${timestamp}.jpeg`;
+
+  downloadLink.href = uri;
+  downloadLink.download = fileName;
+  downloadLink.click();
+}
+
+export default {
+  handleChange,
+  handleNavigate,
+  downloadScreenshot,
+};
 
 // ----------------------------------------
 // Deposit & Withdraw handleChange function
@@ -109,3 +122,33 @@ export default { handleChange, handleNavigate };
 //   if (value) setShow(false);
 //   else setShow(true);
 // }
+
+// Screenshot
+// axios
+//   //https://betterbank.herokuapp.com/screenshot
+//   .get("http://localhost:5050/screenshot", {
+//     params: {
+//       date: timeStamp,
+//       type: "Deposit",
+//       id: userId,
+//     },
+//   })
+//   .then((result) => {
+//     console.log("screenshot done", result);
+//     screenshot = result.data;
+
+//     base64 = `data:image/jpeg;base64,${result.data}`;
+//     // base64 = imgStr;
+//     console.log(base64);
+//     // downloadScreenshot("Deposit", timeStamp, base64);
+
+//     setDownload(true);
+
+//     setTextColor(COLORS.transactionComplete);
+//     setStatus("Screenshot Complete");
+//   })
+//   .catch((err) => {
+//     console.error("screenshot Error", err.message);
+//     setTextColor("red");
+//     setStatus("Could not complete Screenshot");
+//   });

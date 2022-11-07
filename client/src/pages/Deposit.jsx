@@ -1,70 +1,76 @@
-import React, { useState, useEffect, useContext } from "react";
-import NavBar from "../components/NavBar";
+import React, { useState, useContext, useEffect } from "react";
 import SubmitBtn from "../components/SubmitBtn";
 import CustomCard from "../components/Card";
 import Form from "react-bootstrap/Form";
 import { UserContext } from "../index";
 import PageNotFound from "../components/PageNotFound";
-import { handleChange } from "../helper/handleHelper";
+import { handleChange, downloadScreenshot } from "../helper/handleHelper";
 import {
   QueryGetUser,
   MutationUpdateUser,
-  QueryGetUserByEmail,
 } from "../helper/queryMutationHelper";
 import dayjs from "dayjs";
 import { COLORS } from "../themes";
 import { useParams } from "react-router-dom";
-import axios from "axios";
+import NotAuthorized from "../components/NotAuthorized";
+import html2canvas from "html2canvas";
+import Loading from "../components/Loading";
+import { useMediaQuery } from "react-responsive";
+
 // ** If grabbing value from onChange on each keychange, use ref OR e.target.value; NOT depositValue
 // ** setState won't update until next render, so messes up disabled/abled button
 
-export default function Deposit({ token, userId, userEmail }) {
+export default function Deposit({ userId, userEmail }) {
   console.log("----- DEPOSIT -----");
   // const ref = useRef(null);
   const [showSubmit, setShowSubmit] = useState(false);
   const [status, setStatus] = useState("");
+  const [switchState, setSwitchState] = useState(
+    localStorage.getItem("auto-snp") === "true" ? true : false
+  );
+  const [showDownload, setDownload] = useState(false);
+  const [timestamp, setTimestamp] = useState("");
   const [depositValue, setDepositValue] = useState("");
   const [textColor, setTextColor] = useState("");
-  const { id } = useParams();
+  const { id: paramId } = useParams();
   const ctx = useContext(UserContext);
-  console.log("ctx", ctx);
+  const isBigScreen = useMediaQuery({ query: "(min-width: 650px)" });
+  const isBiggerScreen = useMediaQuery({ query: "(min-width: 900px)" });
+  const isBiggestScreen = useMediaQuery({ query: "(min-width: 1200px)" });
 
-  let balance, transactions;
+  let balance, transactions, uri, base64;
 
-  if (!ctx.user.id) ctx.user.id = userId;
-
-  useEffect(() => {
-    if (token) fetchData(token);
-  }, [token]);
-
-  // Fetch Data from Server using Auth Token
-  const fetchData = async (token) => {
-    console.log("fetchData token", token);
-    const result = await axios.get(
-      "https://betterbank.herokuapp.com:5050/api/todos",
-      {
-        headers: {
-          Authorization: `Bearer + ${token}`,
-        },
-      }
-    );
-    console.log(result.data);
-  };
+  if (ctx.user && !ctx.user.id) ctx.user.id = userId;
 
   // Check if userId matches url parameter; if NOT --> Not Authorized
   console.log("USER ID", userId);
-  console.log("PARAM ID", id);
-  if (userId !== id) return <PageNotFound id={userId} />;
+  console.log("PARAM ID", paramId);
 
-  // Update User Mutation
-  const updateUser = MutationUpdateUser(id, userEmail);
+  useEffect(() => {
+    console.count("Deposit useEffect");
+    // Download Screenshot
+    if (showDownload && timestamp) {
+      html2canvas(document.body).then((canvas) => {
+        uri = canvas.toDataURL();
+        console.log("uri", uri);
+        downloadScreenshot("Deposit", timestamp, uri);
+
+        setShowSubmit(false);
+        setDepositValue("");
+        setTimestamp("");
+      });
+    }
+  }, [timestamp]);
+
+  if (userId !== paramId) return <NotAuthorized id={userId} />;
+
+  // Update User using GraphQL Mutation
+  const updateUser = MutationUpdateUser(userId, userEmail);
 
   // Get User Query: Retrieve Balance & Transactions
   try {
-    // ??
-    // QueryGetUserByEmail(userEmail);
-    let { queriedId, currentBalance, xTransactions } = QueryGetUser(id);
-    // userId = queriedId;
+    let { loading, currentBalance, xTransactions } = QueryGetUser(userId);
+    if (loading) return <Loading />;
     balance = currentBalance;
     transactions = xTransactions;
   } catch (err) {
@@ -73,7 +79,7 @@ export default function Deposit({ token, userId, userEmail }) {
     if (err.message == "Data is null") {
       console.error("DATA IS NULL");
       // setShowPage(false);
-      return <PageNotFound id={id} />;
+      return <PageNotFound id={paramId} />;
     } else if (err.message == "Error getting User Data") {
       return (
         <h1 style={{ color: "red" }}>ERROR GETTING USER DATA: {err.message}</h1>
@@ -86,37 +92,76 @@ export default function Deposit({ token, userId, userEmail }) {
     console.log("-- handleDeposit FUNCTION --");
     console.log("depositVal", depositValue, typeof depositValue);
     const depositInt = parseInt(depositValue);
+    const timeStamp = dayjs().format("MM/DD/YYYY HH:mm:ss");
     balance += depositInt;
     transactions = [
       ...transactions,
       {
         info: `Deposit $${depositInt}`,
-        timeStamp: dayjs().format("MM/DD/YYYY HH:mm:ss"),
+        timeStamp,
       },
     ];
 
     try {
-      updateUser({ variables: { id, userData: { balance, transactions } } });
+      updateUser({
+        variables: { id: userId, userData: { balance, transactions } },
+      });
     } catch (err) {
       console.error("Deposit updateUser Error", err.message);
+      setTextColor("red");
+      setStatus("Transaction Error. Please Try Again");
     }
 
+    setTimestamp(timeStamp);
     setTextColor(COLORS.transactionComplete);
     setStatus("Deposit Complete!");
-    setShowSubmit(false);
-    setDepositValue("");
+
+    // If Snapshot Switch is on --> Take Screenshot
+    if (switchState) {
+      console.log("take screenshot");
+      setDownload(true);
+    } else {
+      setShowSubmit(false);
+      setDepositValue("");
+      setTimestamp("");
+    }
   }
 
   return (
     <>
-      <NavBar id={userId} />
       <div className="page-wrapper">
+        <Form
+          style={{
+            position: "relative",
+            bottom: "65px",
+            right: isBiggestScreen
+              ? "390px"
+              : isBiggerScreen
+              ? "290px"
+              : isBigScreen
+              ? "190px"
+              : "90px",
+            margin: "0 auto",
+          }}
+        >
+          <Form.Check
+            type="switch"
+            id="snapshot-switch"
+            label="Snapshot of Transaction"
+            defaultChecked={switchState}
+            onChange={() => {
+              localStorage.setItem("auto-snp", !switchState);
+              setSwitchState((prevVal) => !prevVal);
+            }}
+          />
+        </Form>
         <h1>Deposit</h1>
 
         <CustomCard
-          bgHeaderColor={COLORS.cardHeader}
+          id="#deposit-card"
+          bgHeaderColor={COLORS.darkerTheme}
           header="Deposit Into Account"
-          bgColor={COLORS.cardBackground}
+          bgColor={COLORS.cardBodyBg}
           statusText={status}
           statusColor={textColor}
           body={
@@ -151,15 +196,17 @@ export default function Deposit({ token, userId, userEmail }) {
               </Form.Group>
 
               {showSubmit ? (
-                <SubmitBtn name="Deposit" handleClick={handleDeposit} />
+                <SubmitBtn
+                  name="Deposit"
+                  handleClick={handleDeposit}
+                  bgColor={COLORS.darkerTheme}
+                />
               ) : (
                 <SubmitBtn name="Deposit" disabled="true" />
               )}
             </Form>
           }
         />
-        {/* DEVELOPMENT ONLY */}
-        {/* <div>{JSON.stringify(user)}</div> */}
       </div>
     </>
   );

@@ -16,7 +16,6 @@ const CREATE_USER = gql`
       id
       name
       email
-      balance
     }
   }
 `;
